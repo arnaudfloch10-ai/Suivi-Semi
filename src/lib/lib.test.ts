@@ -4,10 +4,12 @@ import {
   allureCibleTexte,
   couleurDeSemaine,
   paceFromVma,
+  zoneAllureSelonVma,
   zoneDeCharge,
   zoneDeSemaine,
   zoneSeance,
 } from "./vma";
+import type { Zone } from "../data/types";
 import { dateCourse, dateSeance, semaineCourante, toISODate } from "./calendar";
 import { assiduite, kmRealises } from "./stats";
 import { PLAN_PAR_CHARGE, programme } from "../data/programme";
@@ -70,6 +72,19 @@ describe("vma — zone d'une séance (plan 10 km)", () => {
     expect(zoneSeance(mkSeance({ type: "fractionne", sous_type: "Seuil SV1", libelle: "SV1" }))).toBe(3);
     expect(zoneSeance(mkSeance({ type: "ef", libelle: "FOOTING Z1" }))).toBe(1);
     expect(zoneSeance(mkSeance({ type: "sortie_longue", libelle: "SL Z2" }))).toBe(2);
+  });
+});
+
+describe("vma — zones recalculées selon la VMA", () => {
+  const z2: Zone = { zone: 2, nom: "Z2", allure: "5:50 - 6:05 /km", usage: "" };
+  it("reproduit les valeurs du coach à la VMA de référence", () => {
+    expect(zoneAllureSelonVma(z2, 14, 14)).toBe("5:50 – 6:05 /km");
+  });
+  it("accélère les zones quand la VMA monte", () => {
+    const ref = zoneAllureSelonVma(z2, 14, 14);
+    const plus = zoneAllureSelonVma(z2, 14, 15);
+    expect(plus).not.toBe(ref);
+    expect(parsePace(plus.split(" ")[0])!).toBeLessThan(parsePace(ref.split(" ")[0])!);
   });
 });
 
