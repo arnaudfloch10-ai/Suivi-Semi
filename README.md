@@ -1,8 +1,13 @@
-# Suivi Semi — carnet d'entraînement
+# Suivi — carnet d'entraînement
 
-Application mobile (PWA) pour suivre un plan d'entraînement de 12 semaines vers
-un semi-marathon. Objectif : **terminer les 21,1 km**. Un carnet, rien de plus —
-la séance du jour, la saisie après-coup, la progression.
+Application mobile (PWA) pour suivre **un** plan d'entraînement de course à
+pied. Un carnet, rien de plus — la séance du jour, la saisie après-coup, la
+progression. Le plan actuellement embarqué : **10 km, 9 semaines** (objectif
+terminer en moins de 60 min).
+
+Le plan peut être remplacé : il suffit de fournir un nouveau `programme.json`.
+L'app s'adapte à la durée (nombre de semaines) et au mode de périodisation —
+par **volume** (km/semaine) ou par **charge d'intensité** (`charge_pct`).
 
 Soigné, calme, lisible. Fonctionne **100 % hors-ligne**, aucune donnée ne quitte
 le téléphone.
@@ -33,7 +38,8 @@ avant tout écrasement, rappel discret toutes les 2 semaines.
 ## Stack
 
 React + Vite + TypeScript · Tailwind CSS · vite-plugin-pwa · Recharts (courbes)
-· polices auto-hébergées (Bricolage Grotesque, Inter Tight, IBM Plex Mono).
+· polices serif auto-hébergées (Playfair Display pour les titres, Spectral pour
+le texte et les données).
 
 ## Développement
 

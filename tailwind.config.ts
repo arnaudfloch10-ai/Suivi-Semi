@@ -16,9 +16,9 @@ export default {
         zone5: "#8C2C21",
       },
       fontFamily: {
-        display: ['"Bricolage Grotesque"', "system-ui", "sans-serif"],
-        sans: ['"Inter Tight"', "system-ui", "sans-serif"],
-        mono: ['"IBM Plex Mono"', "ui-monospace", "monospace"],
+        display: ['"Playfair Display"', "Georgia", "serif"],
+        sans: ['"Spectral"', "Georgia", "serif"],
+        mono: ['"Spectral"', "Georgia", "serif"],
       },
       maxWidth: {
         app: "26rem",

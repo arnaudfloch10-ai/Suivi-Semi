@@ -3,8 +3,8 @@
 // Passées pleines · en cours marquée d'un trait · futures en contour.
 // On tape une colonne, on ouvre la semaine.
 
-import { programme } from "../data/programme";
-import { couleurDeSemaine } from "../lib/vma";
+import { programme, PLAN_PAR_CHARGE } from "../data/programme";
+import { chargeDeSemaine, couleurDeSemaine } from "../lib/vma";
 
 const W = 360;
 const H = 150;
@@ -24,7 +24,7 @@ export default function LoadWave({
 }) {
   const semaines = programme.semaines;
   const n = semaines.length;
-  const maxVol = Math.max(...semaines.map((s) => s.volume_km));
+  const maxVol = Math.max(...semaines.map(chargeDeSemaine));
   const colW = (W - PAD_X * 2 - GAP * (n - 1)) / n;
   const hMax = BASE - TOP;
 
@@ -34,16 +34,16 @@ export default function LoadWave({
         viewBox={`0 0 ${W} ${H}`}
         className="w-full"
         role="group"
-        aria-label="Vague de charge — les 12 semaines du plan"
+        aria-label="Vague de charge — les semaines du plan"
       >
         {/* ligne de sol discrète */}
         <line x1={PAD_X} y1={BASE + 0.5} x2={W - PAD_X} y2={BASE + 0.5} stroke="#16201C" strokeOpacity={0.12} />
 
         {semaines.map((sem, i) => {
           const x = PAD_X + i * (colW + GAP);
-          const h = Math.max(6, (sem.volume_km / maxVol) * hMax);
+          const h = Math.max(6, (chargeDeSemaine(sem) / maxVol) * hMax);
           const y = BASE - h;
-          const couleur = couleurDeSemaine(sem.intensite);
+          const couleur = couleurDeSemaine(sem);
           const etat =
             sem.numero < semaineCourante
               ? "passee"
@@ -51,8 +51,10 @@ export default function LoadWave({
                 ? "encours"
                 : "future";
           const future = etat === "future";
+          const mesure =
+            sem.charge_pct != null ? `charge ${sem.charge_pct} %` : `${sem.volume_km} km`;
           const label =
-            `Semaine ${sem.numero}, ${sem.volume_km} km, intensité ${sem.intensite}` +
+            `Semaine ${sem.numero}, ${mesure}, intensité ${sem.intensite}` +
             (etat === "encours" ? ", en cours" : etat === "passee" ? ", passée" : ", à venir");
 
           return (
@@ -89,7 +91,7 @@ export default function LoadWave({
                 y={H - 6}
                 textAnchor="middle"
                 fontSize={10}
-                fontFamily="'IBM Plex Mono', monospace"
+                fontFamily="'Spectral', Georgia, serif"
                 fill="#16201C"
                 fillOpacity={etat === "future" ? 0.4 : 0.7}
                 fontWeight={etat === "encours" ? 600 : 400}
@@ -120,7 +122,9 @@ export default function LoadWave({
         })}
       </svg>
       <figcaption className="mt-1 flex items-center justify-between px-1 text-[11px] text-sourdine">
-        <span>Volume hebdomadaire · couleur = intensité</span>
+        <span>
+          {PLAN_PAR_CHARGE ? "Charge hebdomadaire" : "Volume hebdomadaire"} · couleur = intensité
+        </span>
         <span>Touche une semaine</span>
       </figcaption>
     </figure>

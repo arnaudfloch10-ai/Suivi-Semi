@@ -18,7 +18,7 @@ export default function Countdown({ dateDebut }: { dateDebut: string }) {
     libelle = "c'est le jour J";
   } else {
     valeur = "Terminé";
-    libelle = "semi-marathon couru";
+    libelle = "course courue";
   }
 
   return (
@@ -30,7 +30,7 @@ export default function Countdown({ dateDebut }: { dateDebut: string }) {
         <div className="mt-1 text-sm text-sourdine">{libelle}</div>
       </div>
       <div className="text-right text-xs text-sourdine">
-        <div className="uppercase tracking-[0.14em]">Semi-marathon</div>
+        <div className="uppercase tracking-[0.14em]">Jour de course</div>
         <div className="tnum mt-0.5">{date}</div>
       </div>
     </div>

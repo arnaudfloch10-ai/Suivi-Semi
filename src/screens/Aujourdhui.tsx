@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useApp } from "../store/useApp";
 import { aujourdHui, seanceDuJour, toISODate } from "../lib/calendar";
-import { allureCible, primaryZone } from "../lib/vma";
+import { allureCibleTexte, zoneSeance } from "../lib/vma";
 import { TYPE_LABEL } from "../lib/labels";
 import { formatDateLong, nombreFr } from "../lib/format";
 import ZonePill from "../components/ZonePill";
@@ -41,15 +41,15 @@ export default function Aujourdhui() {
     );
   }
 
-  const zone = primaryZone(seance);
-  const cible = allureCible(seance, reglages.vma);
+  const zone = zoneSeance(seance);
+  const cible = allureCibleTexte(seance, reglages.vma);
   const entree = entreePour(seance.id);
 
   return (
     <>
       <Cadre date={dateJour} meta={`S${semaine} · ${seance.jour}`}>
         <p className="text-sm font-medium uppercase tracking-[0.14em] text-sourdine">
-          {TYPE_LABEL[seance.type]}
+          {seance.sous_type ?? TYPE_LABEL[seance.type]}
         </p>
         <h1 className="mt-1 whitespace-pre-line font-display text-3xl leading-tight text-encre">
           {seance.consigne}
@@ -60,7 +60,7 @@ export default function Aujourdhui() {
             {zone != null && <ZonePill zone={zone} />}
             {cible && (
               <span className="tnum font-mono text-encre">
-                Allure cible <span className="font-medium">{cible}</span> /km
+                Allure cible <span className="font-medium">{cible}</span>
               </span>
             )}
             {seance.distance_km && (

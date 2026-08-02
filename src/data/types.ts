@@ -20,6 +20,11 @@ export interface Seance {
   duree_min: number | null;
   distance_km: number | null;
   a_saisir: boolean;
+  // Champs enrichis (plan 10 km) — optionnels pour rester compatible.
+  sous_type?: string; // "Seuil SV1", "Piste (VMA)"…
+  libelle?: string; // "SV1", "PISTE"…
+  allure_cible?: string | null; // allure fournie par le coach, ex. "5'10-5'20/km"
+  intensite_seance?: number; // 0 à 4
 }
 
 export interface Semaine {
@@ -27,14 +32,16 @@ export interface Semaine {
   mesocycle: string;
   periode: string;
   intensite: string; // "+" … "++++" | "(course)"
-  volume_km: number;
+  volume_km: number | null; // plan par volume
+  charge_pct?: number | null; // plan par charge d'intensité (10 km)
   seances: Seance[];
 }
 
 export interface Zone {
   zone: number; // 1 … 5
-  pct_vma: string; // "65-75%"
-  allure: string; // "5:40 - 6:35 /km"
+  nom?: string; // "SV1 — seuil aérobie"
+  pct_vma?: string; // "65-75%" (plan semi)
+  allure: string; // plage d'allure fournie
   usage: string;
 }
 
@@ -44,9 +51,11 @@ export interface Meta {
   auteur: string;
   vma_kmh: number;
   objectif: string;
+  allure_objectif?: string;
   duree_semaines: number;
   date_debut: string | null;
-  volume_total_km: number;
+  volume_total_km: number | null;
+  note_charge?: string;
 }
 
 export interface Programme {

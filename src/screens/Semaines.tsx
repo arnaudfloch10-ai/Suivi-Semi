@@ -1,11 +1,11 @@
-// Semaines — les 12 semaines, chacune dépliable sur ses 7 jours.
+// Semaines — toutes les semaines du plan, chacune dépliable sur ses 7 jours.
 
 import { useEffect, useState } from "react";
 import { useApp } from "../store/useApp";
 import { programme } from "../data/programme";
 import type { Seance, Semaine } from "../data/types";
 import { dateSeance, etatSeance, toISODate } from "../lib/calendar";
-import { couleurDeSemaine, primaryZone, ZONE_COULEUR } from "../lib/vma";
+import { couleurDeSemaine, zoneSeance, ZONE_COULEUR } from "../lib/vma";
 import { JOURS_COURTS, TYPE_LABEL_COURT } from "../lib/labels";
 import { nombreFr } from "../lib/format";
 import SeanceForm from "../components/SeanceForm";
@@ -22,7 +22,9 @@ export default function Semaines({ semaineInitiale }: { semaineInitiale?: number
 
   return (
     <div className="animate-[fade-in_400ms_ease-out] pt-2">
-      <h1 className="pb-4 font-display text-3xl text-encre">Les 12 semaines</h1>
+      <h1 className="pb-4 font-display text-3xl text-encre">
+        Les {programme.meta.duree_semaines} semaines
+      </h1>
       <div className="-mx-5">
         {programme.semaines.map((sem) => (
           <BlocSemaine
@@ -79,7 +81,8 @@ function BlocSemaine({
   entreePour: ReturnType<typeof useApp>["entreePour"];
   onSaisir: (s: Seance) => void;
 }) {
-  const couleur = couleurDeSemaine(sem.intensite);
+  const couleur = couleurDeSemaine(sem);
+  const mesure = sem.charge_pct != null ? `${sem.charge_pct} %` : `${nombreFr(sem.volume_km ?? 0)} km`;
   return (
     <div className="border-b border-black/10">
       <button
@@ -96,7 +99,7 @@ function BlocSemaine({
           <span className="mt-0.5 block text-xs text-sourdine">{sem.mesocycle}</span>
         </span>
         <span className="text-right">
-          <span className="tnum block font-mono text-sm text-encre">{nombreFr(sem.volume_km)} km</span>
+          <span className="tnum block font-mono text-sm text-encre">{mesure}</span>
           <span className="tnum block text-xs text-sourdine">{sem.intensite}</span>
         </span>
         <svg
@@ -146,7 +149,7 @@ function LigneSeance({
 }) {
   const jour = JOURS_COURTS[seance.jour_index - 1];
   const etat = etatSeance(dateDebut, semaine, seance.jour_index);
-  const zone = primaryZone(seance);
+  const zone = zoneSeance(seance);
   const repos = seance.type === "repos" || !seance.a_saisir;
 
   const contenu = (
@@ -154,7 +157,7 @@ function LigneSeance({
       <span className="tnum w-8 shrink-0 text-xs text-sourdine">{jour}</span>
       <span className="flex-1 min-w-0">
         <span className={`block text-sm ${repos ? "text-sourdine" : "text-encre"}`}>
-          {repos ? "Repos" : TYPE_LABEL_COURT[seance.type]}
+          {repos ? "Repos" : (seance.sous_type ?? TYPE_LABEL_COURT[seance.type])}
         </span>
         {!repos && (
           <span className="block truncate text-xs text-sourdine">

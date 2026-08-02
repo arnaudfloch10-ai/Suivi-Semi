@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useApp } from "../store/useApp";
 import { programme } from "../data/programme";
 import { zonePaceLabel, ZONE_COULEUR } from "../lib/vma";
+import { PLAN_PAR_CHARGE } from "../data/programme";
 import { nombreFr } from "../lib/format";
 import { joursEntre, parseISODate, aujourdHui } from "../lib/calendar";
 import Section from "../components/Section";
@@ -61,6 +62,18 @@ export default function Reglages() {
     }
   }
 
+  function recommencer() {
+    const nb = journal.length;
+    const ok = window.confirm(
+      nb > 0
+        ? `Nouveau plan : une sauvegarde de ton carnet actuel (${nb} séance${nb > 1 ? "s" : ""}) va être téléchargée, puis le journal sera vidé et la date de début redemandée. Continuer ?`
+        : "Repartir de zéro : la date de début sera redemandée. Continuer ?",
+    );
+    if (!ok) return;
+    if (nb > 0) exporter(); // sauvegarde avant d'effacer
+    remplacerTout({ dateDebut: null, vma: reglages.vma }, []);
+  }
+
   const dernier = reglages.dernierExport
     ? joursEntre(parseISODate(reglages.dernierExport.slice(0, 10)), aujourdHui())
     : null;
@@ -108,12 +121,21 @@ export default function Reglages() {
             )}
           </Ligne>
           <p className="text-xs text-sourdine">
-            Le test de la semaine 8 peut la faire bouger. Toutes les allures cibles se recalculent.
+            {PLAN_PAR_CHARGE
+              ? "Le test initial peut la faire bouger. Les allures cibles du plan sont fixées par ton frère."
+              : "Le test de la semaine 8 peut la faire bouger. Toutes les allures cibles se recalculent."}
           </p>
         </div>
       </Section>
 
-      <Section titre="Zones d'allure" aside={<span className="text-xs text-sourdine">selon la VMA</span>}>
+      <Section
+        titre="Zones d'allure"
+        aside={
+          <span className="text-xs text-sourdine">
+            {PLAN_PAR_CHARGE ? "fixées par le coach" : "selon la VMA"}
+          </span>
+        }
+      >
         <ul className="space-y-2.5">
           {programme.zones.map((z) => (
             <li key={z.zone} className="flex items-center gap-3">
@@ -123,12 +145,12 @@ export default function Reglages() {
                 aria-hidden="true"
               />
               <span className="flex-1">
-                <span className="text-sm text-encre">Zone {z.zone}</span>
+                <span className="text-sm text-encre">{z.nom ?? `Zone ${z.zone}`}</span>
                 <span className="block text-xs text-sourdine">{z.usage}</span>
               </span>
               <span className="tnum shrink-0 text-right font-mono text-sm text-encre">
-                {zonePaceLabel(reglages.vma, z.zone)}
-                <span className="block text-xs text-sourdine">{z.pct_vma}</span>
+                {PLAN_PAR_CHARGE ? z.allure : `${zonePaceLabel(reglages.vma, z.zone)} /km`}
+                {z.pct_vma && <span className="block text-xs text-sourdine">{z.pct_vma}</span>}
               </span>
             </li>
           ))}
@@ -183,6 +205,19 @@ export default function Reglages() {
               : `Dernier export il y a ${dernier} jour${dernier > 1 ? "s" : ""}.`}
           </p>
         )}
+      </Section>
+
+      <Section titre="Nouveau plan">
+        <p className="mb-4 text-sm text-sourdine">
+          Recommencer vide le journal et redemande une date de début. Une
+          sauvegarde du carnet actuel est téléchargée avant.
+        </p>
+        <button
+          onClick={recommencer}
+          className="min-h-[48px] w-full rounded-md border border-zone5/40 text-sm font-medium text-zone5"
+        >
+          Recommencer un plan
+        </button>
       </Section>
 
       <Section>
