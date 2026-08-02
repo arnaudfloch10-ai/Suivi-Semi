@@ -1,0 +1,1001 @@
+{
+  "meta": {
+    "titre": "Semi-marathon — programme 12 semaines",
+    "athlete": "Arnaud",
+    "auteur": "Programme établi par mon frère",
+    "vma_kmh": 14,
+    "objectif": "Terminer les 21,1 km (pas de chrono)",
+    "duree_semaines": 12,
+    "date_debut": null,
+    "volume_total_km": 233.0
+  },
+  "zones": [
+    {
+      "zone": 1,
+      "pct_vma": "< 60%",
+      "allure": "> 7:10 /km",
+      "usage": "Recuperation entre fractions, retour au calme"
+    },
+    {
+      "zone": 2,
+      "pct_vma": "65-75%",
+      "allure": "5:40 - 6:35 /km",
+      "usage": "Base de tout le plan, doit rester confortable (on peut parler)"
+    },
+    {
+      "zone": 3,
+      "pct_vma": "78-83%",
+      "allure": "5:05 - 5:30 /km",
+      "usage": "Blocs a allure proche de l'allure de course, en fin de plan"
+    },
+    {
+      "zone": 4,
+      "pct_vma": "85-90%",
+      "allure": "4:45 - 5:00 /km",
+      "usage": "Ameliore la capacite a tenir un effort soutenu"
+    },
+    {
+      "zone": 5,
+      "pct_vma": "90-100%",
+      "allure": "4:17 - 4:45 /km",
+      "usage": "Petites touches courtes, developpe la vitesse de base"
+    }
+  ],
+  "points_attention": [
+    "Frequence cardiaque qui monte vite : garder les footings EF volontairement tres lents au debut, quitte a marcher un peu ; se fier au ressenti/FC plutot qu'a la vitesse.",
+    "Antecedent de chevilles foulees : privilegier surfaces planes/regulieres au debut, chaussures adaptees deja disponibles, renforcement proprioceptif 2x/semaine.",
+    "Objectif = finir la distance, pas un chrono : marche autorisee sur la sortie longue et le jour de la course, notamment apres 15-16 km.",
+    "Sommeil moyen ~6h : point a surveiller, la recuperation conditionne la progression autant que les seances elles-memes.",
+    "Feuille 100% modifiable : ajuste distances, jours ou intensites selon les sensations de ton frere au fil des semaines."
+  ],
+  "semaines": [
+    {
+      "numero": 1,
+      "mesocycle": "Fondamental (base oxydative)",
+      "periode": "PPG",
+      "intensite": "+",
+      "volume_km": 15.0,
+      "seances": [
+        {
+          "id": "S1-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "test",
+          "consigne": "Test VMA - 6'00",
+          "duree_min": 6,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S1-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S1-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "ef",
+          "consigne": "EF 35 min (65-70% VMA)",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S1-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S1-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 30 min (65-70% VMA)\n+ educatifs/4 accelerations en zone 4",
+          "duree_min": 30,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S1-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S1-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 7 km\nZONE 1 , marche autorisée si trop compliqué",
+          "duree_min": null,
+          "distance_km": 7.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "mesocycle": "Fondamental (base oxydative)",
+      "periode": "PPG",
+      "intensite": "++",
+      "volume_km": 17.0,
+      "seances": [
+        {
+          "id": "S2-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "renfo",
+          "consigne": "EF 35 min (65-70% VMA)\n+ gainage/cheville",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S2-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S2-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "EF 30 min + 4x1 min à 80% VMA\n(recup active 2 min trot)",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S2-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S2-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 30 min (70% VMA)",
+          "duree_min": 30,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S2-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "renfo",
+          "consigne": "Repos ou  musculation légère (Gainage sup+inf+Proprio)",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S2-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 8 km ZONE 1",
+          "duree_min": null,
+          "distance_km": 8.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "mesocycle": "Fondamental (base oxydative)",
+      "periode": "PPG",
+      "intensite": "+++",
+      "volume_km": 19.0,
+      "seances": [
+        {
+          "id": "S3-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "renfo",
+          "consigne": "EF 40 min (70% VMA)\n+ gainage/cheville",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S3-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S3-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "EF 30 min + 5x1 min a 80-85% VMA\n(recup active 2 min trot)",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S3-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "renfo",
+          "consigne": "Musculation",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S3-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 35 min (70% VMA)",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S3-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S3-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 10 km\nZONE 2 (5km effectué)",
+          "duree_min": null,
+          "distance_km": 10.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "mesocycle": "Fondamental (base oxydative)",
+      "periode": "Regeneration",
+      "intensite": "+",
+      "volume_km": 16.0,
+      "seances": [
+        {
+          "id": "S4-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S4-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "ef",
+          "consigne": "Footing 30' Z2",
+          "duree_min": 30,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S4-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S4-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "fractionne",
+          "consigne": "3x3' en Z3 contrôlé",
+          "duree_min": 3,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S4-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "renfo",
+          "consigne": "Gainage",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S4-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S4-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 7 km\ncool, decontracte ZONE 1,2",
+          "duree_min": null,
+          "distance_km": 7.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "mesocycle": "Développement (seuil + volume)",
+      "periode": "PPG",
+      "intensite": "++",
+      "volume_km": 21.0,
+      "seances": [
+        {
+          "id": "S5-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 40 min (70-75% VMA)",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S5-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "recup_active",
+          "consigne": "Repos ou marche légère 25'",
+          "duree_min": 25,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S5-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "15 min EF + 3x5 min seuil\n(85-88% VMA, recup 2 min) + 10 min EF",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S5-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S5-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "renfo",
+          "consigne": "EF 35 min (70-75% VMA)\n+ gainage/cheville",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S5-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "Repos complet",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S5-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "SL 10KM en Z2",
+          "duree_min": null,
+          "distance_km": 10.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "mesocycle": "Développement (seuil + volume)",
+      "periode": "Spécifique",
+      "intensite": "+++",
+      "volume_km": 22.0,
+      "seances": [
+        {
+          "id": "S6-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 40 min (70-75% VMA)",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S6-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S6-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "15 min EF + 3x6 min seuil\n(85-88% VMA, recup 2 min) + 10 min EF",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S6-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S6-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 40 min (70-75% VMA)",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S6-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S6-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 11 km\nallure facile",
+          "duree_min": null,
+          "distance_km": 11.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "mesocycle": "Développement (seuil + volume)",
+      "periode": "Spécifique",
+      "intensite": "++++",
+      "volume_km": 24.0,
+      "seances": [
+        {
+          "id": "S7-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 45 min (70-75% VMA)",
+          "duree_min": 45,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S7-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S7-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "15 min EF + 4x6 min seuil\n(85-88% VMA, recup 2 min) + 10 min EF",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S7-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S7-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 40 min (70-75% VMA)\n+ educatifs",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S7-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S7-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "test",
+          "consigne": "Sortie longue 13 km\nallure facile, tester la nutrition",
+          "duree_min": null,
+          "distance_km": 13.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "mesocycle": "Développement (seuil + volume)",
+      "periode": "Regeneration",
+      "intensite": "+",
+      "volume_km": 15.0,
+      "seances": [
+        {
+          "id": "S8-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "test",
+          "consigne": "TEST intermédiaire VMA 6'00",
+          "duree_min": 6,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S8-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S8-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "EF 25 min + 4x2 min allure semi\n(80% VMA, recup 1 min)",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S8-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S8-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S8-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "renfo",
+          "consigne": "Muscu / gainage",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S8-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 8 km\ncool, decontracte",
+          "duree_min": null,
+          "distance_km": 8.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "mesocycle": "Spécifique / Affûtage",
+      "periode": "Specifique",
+      "intensite": "+++",
+      "volume_km": 27.0,
+      "seances": [
+        {
+          "id": "S9-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 40 min (70% VMA)",
+          "duree_min": 40,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S9-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S9-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "15 min EF + 3x8 min seuil\n(85% VMA, recup 2 min) + 10 min EF",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S9-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S9-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 35 min (70% VMA)",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S9-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S9-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 16-17 km (pic)\nallure tres facile, marche aux ravitos si besoin",
+          "duree_min": null,
+          "distance_km": 17.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "mesocycle": "Spécifique / Affûtage",
+      "periode": "Affutage",
+      "intensite": "++",
+      "volume_km": 20.0,
+      "seances": [
+        {
+          "id": "S10-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 35 min facile",
+          "duree_min": 35,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S10-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S10-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "EF 25 min + 4x3 min allure semi\n(80% VMA, recup 1 min)",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S10-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S10-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "EF 25 min facile",
+          "duree_min": 25,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S10-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "renfo",
+          "consigne": "Gainage",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S10-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 10-12 km\nallure facile, tranquille",
+          "duree_min": null,
+          "distance_km": 12.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "mesocycle": "Spécifique / Affûtage",
+      "periode": "Affutage",
+      "intensite": "+",
+      "volume_km": 14.0,
+      "seances": [
+        {
+          "id": "S11-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "ef",
+          "consigne": "EF 25 min facile",
+          "duree_min": 25,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S11-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "repos",
+          "consigne": "REPOS",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S11-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "fractionne",
+          "consigne": "EF 20 min + 3x1 min vive (90% VMA)\n+ educatifs/accelerations",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S11-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S11-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "ef",
+          "consigne": "Repos ou EF 15 min tres leger",
+          "duree_min": 15,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S11-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "renfo",
+          "consigne": "Gainage",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S11-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "sortie_longue",
+          "consigne": "Sortie longue 8 km\nallure tres facile",
+          "duree_min": null,
+          "distance_km": 8.0,
+          "a_saisir": true
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "mesocycle": "Spécifique / Affûtage",
+      "periode": "Course",
+      "intensite": "(course)",
+      "volume_km": 23.0,
+      "seances": [
+        {
+          "id": "S12-J1",
+          "jour": "Lundi",
+          "jour_index": 1,
+          "type": "repos",
+          "consigne": "Repos complet",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S12-J2",
+          "jour": "Mardi",
+          "jour_index": 2,
+          "type": "recup_active",
+          "consigne": "Marche 25' souple",
+          "duree_min": 25,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S12-J3",
+          "jour": "Mercredi",
+          "jour_index": 3,
+          "type": "ef",
+          "consigne": "EF 15-20 min tres facile\n+ quelques lignes droites",
+          "duree_min": 20,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S12-J4",
+          "jour": "Jeudi",
+          "jour_index": 4,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S12-J5",
+          "jour": "Vendredi",
+          "jour_index": 5,
+          "type": "repos",
+          "consigne": "Repos",
+          "duree_min": null,
+          "distance_km": null,
+          "a_saisir": false
+        },
+        {
+          "id": "S12-J6",
+          "jour": "Samedi",
+          "jour_index": 6,
+          "type": "renfo",
+          "consigne": "Déblocage léger 20' + 6 accélération allure semi",
+          "duree_min": 20,
+          "distance_km": null,
+          "a_saisir": true
+        },
+        {
+          "id": "S12-J7",
+          "jour": "Dimanche",
+          "jour_index": 7,
+          "type": "course",
+          "consigne": "SEMI-MARATHON 21,1 km\ndepart prudent, objectif = terminer",
+          "duree_min": null,
+          "distance_km": 21.1,
+          "a_saisir": true
+        }
+      ]
+    }
+  ]
+}
