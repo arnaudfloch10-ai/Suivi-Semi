@@ -1,8 +1,8 @@
 // Tout ce qui touche à la VMA, aux zones et aux allures cibles.
 // La couleur d'un élément dit toujours quelque chose de vrai sur son intensité.
 
-import type { Seance, Semaine } from "../data/types";
-import { paceToStr } from "./format";
+import type { Seance, Semaine, Zone } from "../data/types";
+import { paceToStr, parsePace } from "./format";
 
 export const ZONE_COULEUR: Record<number, string> = {
   1: "#7C93A3",
@@ -44,6 +44,28 @@ export function zonePaceRange(vma: number, zone: number): { min: number; max: nu
 export function zonePaceLabel(vma: number, zone: number): string {
   const { min, max } = zonePaceRange(vma, zone);
   return `${paceToStr(min)} – ${paceToStr(max)}`;
+}
+
+/**
+ * Allure d'une zone recalculée selon la VMA.
+ * On déduit le % de VMA de chaque borne à partir des allures fournies par le
+ * coach (à la VMA de référence du plan), puis on les recalcule à la VMA
+ * courante. À la VMA de référence, on retrouve exactement les valeurs du coach.
+ */
+export function zoneAllureSelonVma(zone: Zone, vmaRef: number, vma: number): string {
+  const bornes = (zone.allure.match(/\d{1,2}:[0-5]\d/g) ?? [])
+    .map(parsePace)
+    .filter((p): p is number => p != null)
+    .slice(0, 2);
+  if (bornes.length === 2 && vmaRef > 0 && vma > 0) {
+    const recalc = bornes.map((p) => {
+      const pct = 60 / p / vmaRef; // fraction de VMA à la référence
+      return paceToStr(60 / (vma * pct));
+    });
+    return `${recalc[0]} – ${recalc[1]} /km`;
+  }
+  // Repli : plages génériques par zone.
+  return `${zonePaceLabel(vma, zone.zone)} /km`;
 }
 
 /**
