@@ -1,7 +1,7 @@
 // Accueil — « Où j'en suis ». Écran d'ouverture, le plus important.
 
 import { useApp } from "../store/useApp";
-import { programme } from "../data/programme";
+import { programme, PLAN_PAR_CHARGE, VOLUME_TOTAL } from "../data/programme";
 import { semaineCourante } from "../lib/calendar";
 import {
   allureEfParSemaine,
@@ -9,7 +9,6 @@ import {
   exportConseille,
   kmPrevusAJour,
   kmRealises,
-  KM_TOTAL_PREVU,
   ressentiParSemaine,
 } from "../lib/stats";
 import { couleurDeSemaine } from "../lib/vma";
@@ -76,7 +75,7 @@ export default function Accueil({
         <div className="flex items-center gap-2 pt-1">
           <span
             className="inline-block h-2.5 w-2.5 rounded-full"
-            style={{ background: couleurDeSemaine(sem.intensite) }}
+            style={{ background: couleurDeSemaine(sem) }}
             aria-hidden="true"
           />
           <span className="tnum text-sm text-sourdine">
@@ -104,11 +103,19 @@ export default function Accueil({
             unite="%"
             legende={`${ass.realisees}/${ass.prevues} séances réalisées`}
           />
-          <Chiffre
-            valeur={nombreFr(Math.round(kmFaits))}
-            unite={`/ ${nombreFr(Math.round(kmPrevus))} km`}
-            legende={`prévu à ce jour · ${nombreFr(KM_TOTAL_PREVU)} km au total`}
-          />
+          {PLAN_PAR_CHARGE ? (
+            <Chiffre
+              valeur={nombreFr(Math.round(kmFaits))}
+              unite="km"
+              legende="parcourus et saisis"
+            />
+          ) : (
+            <Chiffre
+              valeur={nombreFr(Math.round(kmFaits))}
+              unite={`/ ${nombreFr(Math.round(kmPrevus))} km`}
+              legende={`prévu à ce jour · ${nombreFr(VOLUME_TOTAL)} km au total`}
+            />
+          )}
         </div>
       </Section>
 

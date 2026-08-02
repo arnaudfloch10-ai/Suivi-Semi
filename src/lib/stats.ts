@@ -1,6 +1,6 @@
 // Statistiques de l'accueil — assiduité, kilomètres, ressenti, allure EF.
 
-import { programme } from "../data/programme";
+import { programme, VOLUME_TOTAL } from "../data/programme";
 import type { Entree, Seance } from "../data/types";
 import { aujourdHui, dateSeance, joursEntre, parseISODate, toISODate } from "./calendar";
 import { parsePace } from "./format";
@@ -59,7 +59,7 @@ export function kmRealises(journal: Entree[]): number {
 
 /**
  * Km prévus « à ce stade » : volume des semaines écoulées + prorata de la
- * semaine en cours (jours écoulés / 7). Total sur 12 semaines = 233 km.
+ * semaine en cours (jours écoulés / 7). Pertinent seulement pour un plan par volume.
  */
 export function kmPrevusAJour(dateDebut: string): number {
   const today = aujourdHui();
@@ -69,12 +69,12 @@ export function kmPrevusAJour(dateDebut: string): number {
     const joursEcoules = joursEntre(dateSeance(dateDebut, sem.numero, 1), today) + 1;
     if (joursEcoules <= 0) continue; // semaine future
     const frac = Math.min(joursEcoules / 7, 1);
-    km += sem.volume_km * frac;
+    km += (sem.volume_km ?? 0) * frac;
   }
   return km;
 }
 
-export const KM_TOTAL_PREVU = programme.meta.volume_total_km;
+export const KM_TOTAL_PREVU = VOLUME_TOTAL;
 
 export interface PointSemaine {
   semaine: number;

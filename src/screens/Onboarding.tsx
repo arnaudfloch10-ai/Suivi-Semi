@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useApp } from "../store/useApp";
+import { programme } from "../data/programme";
 import { aujourdHui, toISODate } from "../lib/calendar";
 import { formatDateCourt } from "../lib/format";
 
@@ -20,14 +21,14 @@ export default function Onboarding() {
     <div className="flex min-h-full flex-col justify-center px-6 py-12">
       <div className="mx-auto w-full max-w-app">
         <p className="text-sm font-medium uppercase tracking-[0.16em] text-sourdine">
-          Semi-marathon
+          Carnet d'entraînement · {programme.meta.duree_semaines} semaines
         </p>
         <h1 className="mt-2 font-display text-4xl leading-tight text-encre">
-          12 semaines pour finir les 21,1 km.
+          {programme.meta.objectif}.
         </h1>
         <p className="mt-4 text-sourdine">
-          Ton carnet d'entraînement. Pour commencer, indique le lundi de la
-          semaine 1 — tout le calendrier en découle.
+          Pour commencer, indique le lundi de la semaine 1 — tout le calendrier
+          en découle.
         </p>
 
         <div className="mt-10">

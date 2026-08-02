@@ -16,9 +16,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "programme.json"],
       manifest: {
-        name: "Suivi Semi — 12 semaines",
-        short_name: "Suivi Semi",
-        description: "Carnet d'entraînement pour le plan semi-marathon.",
+        name: "Suivi — carnet d'entraînement",
+        short_name: "Suivi",
+        description: "Carnet d'entraînement pour suivre mon plan de course.",
         lang: "fr",
         start_url: base,
         scope: base,

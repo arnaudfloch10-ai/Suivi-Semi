@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Entree, Ressenti, Seance, Statut } from "../data/types";
 import { allureFrom, parsePace } from "../lib/format";
 import { TYPE_LABEL } from "../lib/labels";
-import { allureCible, primaryZone } from "../lib/vma";
+import { allureCibleTexte, zoneSeance } from "../lib/vma";
 import ZonePill from "./ZonePill";
 
 const STATUTS: { v: Statut; label: string }[] = [
@@ -77,8 +77,8 @@ export default function SeanceForm({
   const [fc, setFc] = useState(existante?.fc_moyenne?.toString() ?? "");
   const [commentaire, setCommentaire] = useState(existante?.commentaire ?? "");
 
-  const zone = primaryZone(seance);
-  const cible = allureCible(seance, vma);
+  const zone = zoneSeance(seance);
+  const cible = allureCibleTexte(seance, vma);
 
   // Allure calculée automatiquement tant qu'on ne l'a pas éditée à la main.
   const allureAuto = useMemo(() => {
@@ -138,12 +138,14 @@ export default function SeanceForm({
         </header>
 
         <div className="pt-5">
-          <h2 className="font-display text-2xl text-encre">{TYPE_LABEL[seance.type]}</h2>
+          <h2 className="font-display text-2xl text-encre">
+            {seance.sous_type ?? TYPE_LABEL[seance.type]}
+          </h2>
           <p className="mt-1 whitespace-pre-line text-sm text-sourdine">{seance.consigne}</p>
           {zone != null && cible && (
             <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
               <ZonePill zone={zone} />
-              <span className="tnum font-mono text-sm text-encre">Cible {cible} /km</span>
+              <span className="tnum font-mono text-sm text-encre">Cible {cible}</span>
             </div>
           )}
         </div>

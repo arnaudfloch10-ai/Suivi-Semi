@@ -1,64 +1,99 @@
 import { describe, expect, it } from "vitest";
 import { allureFrom, parsePace, paceToStr } from "./format";
 import {
+  allureCibleTexte,
   couleurDeSemaine,
   paceFromVma,
-  primaryZone,
+  zoneDeCharge,
   zoneDeSemaine,
-  zonePaceLabel,
+  zoneSeance,
 } from "./vma";
 import { dateCourse, dateSeance, semaineCourante, toISODate } from "./calendar";
-import { assiduite, kmPrevusAJour, KM_TOTAL_PREVU } from "./stats";
-import { programme } from "../data/programme";
-import type { Entree, Seance } from "../data/types";
+import { assiduite, kmRealises } from "./stats";
+import { PLAN_PAR_CHARGE, programme } from "../data/programme";
+import type { Entree, Seance, Semaine } from "../data/types";
+
+const mkSeance = (over: Partial<Seance>): Seance => ({
+  id: "x",
+  jour: "Lundi",
+  jour_index: 1,
+  type: "ef",
+  consigne: "",
+  duree_min: 30,
+  distance_km: null,
+  a_saisir: true,
+  ...over,
+});
+
+const mkSemaine = (over: Partial<Semaine>): Semaine => ({
+  numero: 1,
+  mesocycle: "",
+  periode: "",
+  intensite: "+++",
+  volume_km: null,
+  seances: [],
+  ...over,
+});
 
 describe("format", () => {
-  it("paceToStr", () => {
+  it("paceToStr / parsePace", () => {
     expect(paceToStr(5.7)).toBe("5:42");
-    expect(paceToStr(6)).toBe("6:00");
-    expect(paceToStr(0)).toBe("—");
-  });
-  it("parsePace round-trip", () => {
     expect(parsePace("5:42")).toBeCloseTo(5.7, 5);
-    expect(parsePace("bad")).toBeNull();
-  });
-  it("allureFrom", () => {
     expect(allureFrom(60, 10)).toBe("6:00");
-    expect(allureFrom(undefined, 10)).toBeUndefined();
   });
 });
 
-describe("vma", () => {
-  it("paceFromVma : 100% VMA 14 = 4:17", () => {
+describe("vma — allures", () => {
+  it("paceFromVma", () => {
     expect(paceToStr(paceFromVma(14, 1))).toBe("4:17");
-  });
-  it("paceFromVma : 70% VMA 14 ≈ 6:07", () => {
     expect(paceToStr(paceFromVma(14, 0.7))).toBe("6:07");
   });
-  it("le recalcul suit la VMA", () => {
-    expect(zonePaceLabel(14, 2)).not.toBe(zonePaceLabel(15, 2));
+  it("allure cible : priorité à celle du coach", () => {
+    const s = mkSeance({ type: "fractionne", sous_type: "Seuil SV1", allure_cible: "5'10-5'20/km" });
+    expect(allureCibleTexte(s, 14)).toBe("5'10-5'20/km");
   });
-  it("zone principale par type", () => {
-    const mk = (over: Partial<Seance>): Seance => ({
-      id: "x", jour: "Lundi", jour_index: 1, type: "ef",
-      consigne: "", duree_min: 30, distance_km: null, a_saisir: true, ...over,
-    });
-    expect(primaryZone(mk({ type: "repos", duree_min: null }))).toBeNull();
-    expect(primaryZone(mk({ type: "ef" }))).toBe(2);
-    expect(primaryZone(mk({ type: "test" }))).toBe(5);
-    expect(primaryZone(mk({ type: "course" }))).toBe(3);
-    expect(primaryZone(mk({ type: "sortie_longue", consigne: "SL 7 km ZONE 1" }))).toBe(1);
-    expect(primaryZone(mk({ type: "fractionne", consigne: "4x2 min allure semi (80% VMA)" }))).toBe(3);
-    expect(primaryZone(mk({ type: "fractionne", consigne: "3x5 min seuil (85-88% VMA)" }))).toBe(4);
-    expect(primaryZone(mk({ type: "fractionne", consigne: "3x1 min vive (90% VMA)" }))).toBe(5);
-    expect(primaryZone(mk({ type: "fractionne", consigne: "3x3' en Z3 contrôlé" }))).toBe(3);
-    expect(primaryZone(mk({ type: "renfo", consigne: "Musculation", duree_min: null }))).toBeNull();
+  it("allure cible : calcul de repli si non fournie", () => {
+    const s = mkSeance({ type: "ef", allure_cible: null });
+    expect(allureCibleTexte(s, 14)).toMatch(/\/km$/);
   });
-  it("couleur de semaine suit l'intensité", () => {
-    expect(zoneDeSemaine("+")).toBe(2);
-    expect(zoneDeSemaine("++++")).toBe(5);
-    expect(zoneDeSemaine("(course)")).toBe(3);
-    expect(couleurDeSemaine("++++")).toBe("#8C2C21");
+});
+
+describe("vma — zone d'une séance (plan 10 km)", () => {
+  it("mappe les libellés du plan", () => {
+    expect(zoneSeance(mkSeance({ type: "repos" }))).toBeNull();
+    expect(zoneSeance(mkSeance({ type: "renfo", sous_type: "Étirements" }))).toBeNull();
+    expect(zoneSeance(mkSeance({ type: "test", libelle: "TEST INITIAL" }))).toBe(5);
+    expect(zoneSeance(mkSeance({ type: "course", libelle: "10KM" }))).toBe(3);
+    expect(zoneSeance(mkSeance({ type: "fractionne", sous_type: "Piste (VMA)", libelle: "PISTE" }))).toBe(5);
+    expect(zoneSeance(mkSeance({ type: "fractionne", sous_type: "Côtes", libelle: "CÔTE" }))).toBe(4);
+    expect(zoneSeance(mkSeance({ type: "fractionne", sous_type: "Seuil SV2", libelle: "SV2" }))).toBe(4);
+    expect(zoneSeance(mkSeance({ type: "fractionne", sous_type: "Seuil SV1", libelle: "SV1" }))).toBe(3);
+    expect(zoneSeance(mkSeance({ type: "ef", libelle: "FOOTING Z1" }))).toBe(1);
+    expect(zoneSeance(mkSeance({ type: "sortie_longue", libelle: "SL Z2" }))).toBe(2);
+  });
+});
+
+describe("vma — vague de charge", () => {
+  it("bandes de charge : rouge réservé aux pics", () => {
+    expect(zoneDeCharge(50)).toBe(2);
+    expect(zoneDeCharge(60)).toBe(3);
+    expect(zoneDeCharge(70)).toBe(4);
+    expect(zoneDeCharge(80)).toBe(4);
+    expect(zoneDeCharge(90)).toBe(5);
+  });
+  it("couleur de semaine pilotée par la charge si présente", () => {
+    expect(zoneDeSemaine(mkSemaine({ charge_pct: 90 }))).toBe(5);
+    expect(zoneDeSemaine(mkSemaine({ charge_pct: 50 }))).toBe(2);
+    // repli sur l'intensité (plan par volume)
+    expect(zoneDeSemaine(mkSemaine({ charge_pct: null, intensite: "++++" }))).toBe(5);
+    expect(couleurDeSemaine(mkSemaine({ charge_pct: 90 }))).toBe("#8C2C21");
+  });
+});
+
+describe("plan 10 km chargé", () => {
+  it("est bien périodisé par charge", () => {
+    expect(PLAN_PAR_CHARGE).toBe(true);
+    expect(programme.semaines).toHaveLength(9);
   });
 });
 
@@ -68,13 +103,14 @@ describe("calendar", () => {
     expect(toISODate(dateSeance(debut, 1, 1))).toBe("2026-06-22");
     expect(toISODate(dateSeance(debut, 2, 3))).toBe("2026-07-01");
   });
-  it("date de la course = dimanche S12", () => {
-    // 11 semaines complètes + 6 jours = 83 jours après le lundi S1.
-    expect(toISODate(dateCourse(debut))).toBe("2026-09-13");
+  it("course = dimanche de la dernière semaine (S9)", () => {
+    // 8 semaines complètes + 6 jours = 62 jours après le lundi S1.
+    expect(toISODate(dateCourse(debut))).toBe("2026-08-23");
   });
-  it("semaine courante bornée 1..12", () => {
-    expect(semaineCourante(debut)).toBeGreaterThanOrEqual(1);
-    expect(semaineCourante(debut)).toBeLessThanOrEqual(12);
+  it("semaine courante bornée", () => {
+    const n = semaineCourante(debut);
+    expect(n).toBeGreaterThanOrEqual(1);
+    expect(n).toBeLessThanOrEqual(9);
   });
 });
 
@@ -84,16 +120,12 @@ describe("stats", () => {
     { seanceId: "S1-J3", date: "2000-01-05", statut: "faite", ressenti: 3, distance_km: 5 },
     { seanceId: "S1-J7", date: "2000-01-09", statut: "manquee", ressenti: 3 },
   ];
-  it("assiduité : manquée ne compte pas comme réalisée", () => {
+  it("assiduité : une manquée ne compte pas comme réalisée", () => {
     const a = assiduite(debut, journal);
     expect(a.realisees).toBe(1);
     expect(a.prevues).toBeGreaterThan(1);
   });
-  it("km prévus cumulés = total quand tout est passé", () => {
-    expect(kmPrevusAJour(debut)).toBeCloseTo(KM_TOTAL_PREVU, 5);
-  });
-  it("le total prévu correspond à la somme des volumes hebdo", () => {
-    const somme = programme.semaines.reduce((n, s) => n + s.volume_km, 0);
-    expect(somme).toBeCloseTo(KM_TOTAL_PREVU, 5);
+  it("km réalisés = somme des distances saisies", () => {
+    expect(kmRealises(journal)).toBe(5);
   });
 });

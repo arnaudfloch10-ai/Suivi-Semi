@@ -1,7 +1,7 @@
 // Tout ce qui touche à la VMA, aux zones et aux allures cibles.
 // La couleur d'un élément dit toujours quelque chose de vrai sur son intensité.
 
-import type { Seance } from "../data/types";
+import type { Seance, Semaine } from "../data/types";
 import { paceToStr } from "./format";
 
 export const ZONE_COULEUR: Record<number, string> = {
@@ -81,16 +81,42 @@ export function primaryZone(seance: Seance): number | null {
   }
 }
 
-/** Allure cible d'une séance, ou undefined si non pertinent. */
-export function allureCible(seance: Seance, vma: number): string | undefined {
-  const z = primaryZone(seance);
-  if (z == null) return undefined;
-  return zonePaceLabel(vma, z);
+/**
+ * Zone d'une séance pour la couleur — gère le plan 10 km (libellés Z1/Z2/
+ * SV1/SV2/piste/côte) comme le plan par %VMA. null = pas d'allure de course.
+ */
+export function zoneSeance(seance: Seance): number | null {
+  if (seance.type === "repos") return null;
+  if (seance.type === "renfo") return null;
+  if (seance.type === "test") return 5;
+  if (seance.type === "course") return 3;
+
+  const t = `${seance.libelle ?? ""} ${seance.sous_type ?? ""} ${seance.consigne}`.toLowerCase();
+  if (/piste|vma/.test(t)) return 5;
+  if (/c[oô]te/.test(t)) return 4;
+  if (/sv2/.test(t)) return 4;
+  if (/sv1/.test(t)) return 3;
+  if (/\bz2\b/.test(t)) return 2;
+  if (/\bz1\b/.test(t)) return 1;
+  if (/10k|as10k|objectif|intervalle/.test(t)) return 3;
+
+  // Repli sur la logique du plan par %VMA.
+  return primaryZone(seance);
 }
 
-// Correspondance intensité hebdo → zone de couleur pour la vague de charge.
-// C'est l'attribut d'intensité du plan (établi par le frère) qui pilote la
-// chaleur de la colonne : creux verts, pic S7 en rouge, finale = allure course.
+/** Allure cible affichable : d'abord celle fournie par le coach, sinon calculée. */
+export function allureCibleTexte(seance: Seance, vma: number): string | undefined {
+  if (seance.allure_cible) return seance.allure_cible;
+  const z = primaryZone(seance);
+  if (z == null) return undefined;
+  return `${zonePaceLabel(vma, z)} /km`;
+}
+
+// ---- Vague de charge : hauteur + couleur d'une semaine ----
+// Deux modes de périodisation :
+//  • par charge d'intensité (charge_pct, plan 10 km) → couleur = bande de charge
+//  • par volume (intensite "+"…"++++", plan semi)   → couleur = intensité
+
 const INTENSITE_ZONE: Record<string, number> = {
   "+": 2,
   "++": 3,
@@ -99,10 +125,25 @@ const INTENSITE_ZONE: Record<string, number> = {
   "(course)": 3,
 };
 
-export function zoneDeSemaine(intensite: string): number {
-  return INTENSITE_ZONE[intensite.trim()] ?? 2;
+/** Zone de couleur d'après la charge (%). Rouge réservé aux pics (≥ 90 %). */
+export function zoneDeCharge(pct: number): number {
+  if (pct <= 52) return 2;
+  if (pct <= 62) return 3;
+  if (pct <= 85) return 4;
+  return 5;
 }
 
-export function couleurDeSemaine(intensite: string): string {
-  return ZONE_COULEUR[zoneDeSemaine(intensite)];
+/** Zone de couleur d'une semaine, quel que soit le mode du plan. */
+export function zoneDeSemaine(sem: Semaine): number {
+  if (sem.charge_pct != null) return zoneDeCharge(sem.charge_pct);
+  return INTENSITE_ZONE[sem.intensite.trim()] ?? 2;
+}
+
+export function couleurDeSemaine(sem: Semaine): string {
+  return ZONE_COULEUR[zoneDeSemaine(sem)];
+}
+
+/** Hauteur relative d'une semaine dans la vague (charge % ou volume km). */
+export function chargeDeSemaine(sem: Semaine): number {
+  return sem.charge_pct ?? sem.volume_km ?? 0;
 }

@@ -14,7 +14,7 @@ import type { PointSemaine } from "../lib/stats";
 import { paceToStr, nombreFr } from "../lib/format";
 import { ZONE_COULEUR } from "../lib/vma";
 
-const AXE = { fill: "#6B7A74", fontSize: 10, fontFamily: "'IBM Plex Mono', monospace" };
+const AXE = { fill: "#6B7A74", fontSize: 10, fontFamily: "'Spectral', Georgia, serif" };
 
 function aDesDonnees(data: PointSemaine[]): boolean {
   return data.some((d) => d.valeur != null);
