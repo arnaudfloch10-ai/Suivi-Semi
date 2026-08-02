@@ -3,19 +3,25 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Sous-chemin d'URL : "/" en local, "/Suivi-Semi/" sur GitHub Pages
+// (injecté par le workflow via VITE_BASE).
+declare const process: { env: Record<string, string | undefined> };
+const base = process.env.VITE_BASE ?? "/";
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "programme.json", "fonts/*.woff2"],
+      includeAssets: ["favicon.svg", "programme.json"],
       manifest: {
         name: "Suivi Semi — 12 semaines",
         short_name: "Suivi Semi",
         description: "Carnet d'entraînement pour le plan semi-marathon.",
         lang: "fr",
-        start_url: "/",
-        scope: "/",
+        start_url: base,
+        scope: base,
         display: "standalone",
         orientation: "portrait",
         background_color: "#F1F3F2",
@@ -33,7 +39,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2,json}"],
-        navigateFallback: "index.html",
+        navigateFallback: `${base}index.html`,
       },
     }),
   ],
