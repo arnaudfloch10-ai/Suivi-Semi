@@ -13,6 +13,7 @@ import {
   validerSauvegarde,
   type Sauvegarde,
 } from "../store/storage";
+import { encoderPartage, lienCoach } from "../lib/share";
 
 export default function Reglages() {
   const { reglages, journal, majReglages, remplacerTout, demo } = useApp();
@@ -58,6 +59,28 @@ export default function Reglages() {
       setMessage("Carnet importé.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Import impossible.");
+    }
+  }
+
+  async function partagerCoach() {
+    try {
+      const url = lienCoach(await encoderPartage(reglages, journal));
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Mon carnet d'entraînement — vue coach",
+            text: "Voici mes séances (lecture seule).",
+            url,
+          });
+          return;
+        } catch {
+          /* partage annulé → on tente le presse-papier */
+        }
+      }
+      await navigator.clipboard.writeText(url);
+      setMessage("Lien coach copié. Envoie-le à ton frère.");
+    } catch {
+      setMessage("Impossible de créer le lien coach.");
     }
   }
 
@@ -199,6 +222,23 @@ export default function Reglages() {
               : `Dernier export il y a ${dernier} jour${dernier > 1 ? "s" : ""}.`}
           </p>
         )}
+      </Section>
+
+      <Section titre="Partager avec ton frère">
+        <p className="mb-4 text-sm text-sourdine">
+          Génère un lien de suivi (lecture seule) : ton frère voit chaque séance,
+          tes commentaires et ta progression. Le lien contient un instantané de
+          ton carnet — renvoie-en un nouveau quand tu veux qu'il voie la suite.
+        </p>
+        <button
+          onClick={partagerCoach}
+          className="min-h-[48px] w-full rounded-md bg-zone2 text-sm font-medium text-white"
+        >
+          Partager le suivi (lien coach)
+        </button>
+        <p className="mt-3 text-xs text-sourdine">
+          À n'envoyer qu'à ton frère : toute personne ayant le lien voit tes données.
+        </p>
       </Section>
 
       <Section titre="Nouveau plan">
