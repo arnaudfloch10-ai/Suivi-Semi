@@ -1,4 +1,4 @@
-// État global léger — réglages, journal des séances, mesures de sommeil,
+// État global léger — réglages, journal des séances, check-ins du matin,
 // persistés en localStorage. Un seul contexte, pas de dépendance externe.
 
 import {
@@ -10,30 +10,31 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Entree, MesureSommeil, Reglages } from "../data/types";
+import type { CheckIn, Entree, Reglages } from "../data/types";
 import {
+  ecrireCheckins,
   ecrireJournal,
   ecrireReglages,
-  ecrireSommeil,
+  lireCheckins,
   lireJournal,
   lireReglages,
-  lireSommeil,
 } from "./storage";
-import { JOURNAL_DEMO, REGLAGES_DEMO, SOMMEIL_DEMO } from "../mock/journalFictif";
+import { chargeSeance } from "../lib/charge";
+import { CHECKINS_DEMO, JOURNAL_DEMO, REGLAGES_DEMO } from "../mock/journalFictif";
 
 interface AppState {
   reglages: Reglages;
   journal: Entree[];
-  sommeil: MesureSommeil[];
+  checkins: CheckIn[];
   demo: boolean;
   majReglages: (patch: Partial<Reglages>) => void;
   enregistrerEntree: (e: Entree) => void;
   supprimerEntree: (seanceId: string) => void;
   entreePour: (seanceId: string) => Entree | undefined;
-  enregistrerSommeil: (m: MesureSommeil) => void;
-  supprimerSommeil: (date: string) => void;
-  sommeilPour: (date: string) => MesureSommeil | undefined;
-  remplacerTout: (reglages: Reglages, journal: Entree[], sommeil: MesureSommeil[]) => void;
+  enregistrerCheckin: (c: CheckIn) => void;
+  supprimerCheckin: (date: string) => void;
+  checkinPour: (date: string) => CheckIn | undefined;
+  remplacerTout: (reglages: Reglages, journal: Entree[], checkins: CheckIn[]) => void;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -41,9 +42,14 @@ const Ctx = createContext<AppState | null>(null);
 const estDemo = () =>
   typeof window !== "undefined" && new URLSearchParams(window.location.search).has("demo");
 
-// Une mesure de sommeil est-elle vide (aucune valeur saisie) ?
-const sommeilVide = (m: MesureSommeil) =>
-  m.fc_sommeil == null && m.vfc_ms == null && m.temp_var == null;
+// Un check-in est-il vide (aucune valeur) ?
+const checkinVide = (c: CheckIn) =>
+  c.sommeil_h == null &&
+  c.fraicheur == null &&
+  c.fc_sommeil == null &&
+  c.vfc_ms == null &&
+  c.temp_cutanee == null &&
+  !c.douleur;
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const demo = estDemo();
@@ -53,11 +59,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [journal, setJournal] = useState<Entree[]>(() =>
     demo ? JOURNAL_DEMO : lireJournal(),
   );
-  const [sommeil, setSommeil] = useState<MesureSommeil[]>(() =>
-    demo ? SOMMEIL_DEMO : lireSommeil(),
+  const [checkins, setCheckins] = useState<CheckIn[]>(() =>
+    demo ? CHECKINS_DEMO : lireCheckins(),
   );
 
-  // Persistance (jamais en mode démo).
   useEffect(() => {
     if (!demo) ecrireReglages(reglages);
   }, [reglages, demo]);
@@ -65,17 +70,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!demo) ecrireJournal(journal);
   }, [journal, demo]);
   useEffect(() => {
-    if (!demo) ecrireSommeil(sommeil);
-  }, [sommeil, demo]);
+    if (!demo) ecrireCheckins(checkins);
+  }, [checkins, demo]);
 
   const majReglages = useCallback((patch: Partial<Reglages>) => {
     setReglages((r) => ({ ...r, ...patch }));
   }, []);
 
   const enregistrerEntree = useCallback((e: Entree) => {
+    // Charge sRPE calculée à l'enregistrement.
+    const avecCharge = { ...e, charge: chargeSeance(e) };
     setJournal((j) => {
       const autres = j.filter((x) => x.seanceId !== e.seanceId);
-      return [...autres, e].sort((a, b) => a.seanceId.localeCompare(b.seanceId));
+      return [...autres, avecCharge].sort((a, b) => a.seanceId.localeCompare(b.seanceId));
     });
   }, []);
 
@@ -88,48 +95,39 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [journal],
   );
 
-  // Une mesure par jour : on remplace celle de la même date (ou on la retire si vide).
-  const enregistrerSommeil = useCallback((m: MesureSommeil) => {
-    setSommeil((s) => {
-      const autres = s.filter((x) => x.date !== m.date);
-      if (sommeilVide(m)) return autres.sort((a, b) => a.date.localeCompare(b.date));
-      return [...autres, m].sort((a, b) => a.date.localeCompare(b.date));
+  const enregistrerCheckin = useCallback((c: CheckIn) => {
+    setCheckins((s) => {
+      const autres = s.filter((x) => x.date !== c.date);
+      const suite = checkinVide(c) ? autres : [...autres, c];
+      return suite.sort((a, b) => a.date.localeCompare(b.date));
     });
   }, []);
 
-  const supprimerSommeil = useCallback((date: string) => {
-    setSommeil((s) => s.filter((x) => x.date !== date));
+  const supprimerCheckin = useCallback((date: string) => {
+    setCheckins((s) => s.filter((x) => x.date !== date));
   }, []);
 
-  const sommeilPour = useCallback(
-    (date: string) => sommeil.find((m) => m.date === date),
-    [sommeil],
+  const checkinPour = useCallback(
+    (date: string) => checkins.find((c) => c.date === date),
+    [checkins],
   );
 
-  const remplacerTout = useCallback((r: Reglages, j: Entree[], s: MesureSommeil[]) => {
+  const remplacerTout = useCallback((r: Reglages, j: Entree[], c: CheckIn[]) => {
     setReglages(r);
     setJournal(j);
-    setSommeil(s);
+    setCheckins(c);
   }, []);
 
   const value = useMemo<AppState>(
     () => ({
-      reglages,
-      journal,
-      sommeil,
-      demo,
-      majReglages,
-      enregistrerEntree,
-      supprimerEntree,
-      entreePour,
-      enregistrerSommeil,
-      supprimerSommeil,
-      sommeilPour,
-      remplacerTout,
+      reglages, journal, checkins, demo,
+      majReglages, enregistrerEntree, supprimerEntree, entreePour,
+      enregistrerCheckin, supprimerCheckin, checkinPour, remplacerTout,
     }),
     [
-      reglages, journal, sommeil, demo, majReglages, enregistrerEntree, supprimerEntree,
-      entreePour, enregistrerSommeil, supprimerSommeil, sommeilPour, remplacerTout,
+      reglages, journal, checkins, demo, majReglages, enregistrerEntree,
+      supprimerEntree, entreePour, enregistrerCheckin, supprimerCheckin,
+      checkinPour, remplacerTout,
     ],
   );
 

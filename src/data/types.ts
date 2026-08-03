@@ -70,6 +70,8 @@ export interface Programme {
 export type Statut = "faite" | "adaptee" | "manquee";
 export type Ressenti = 1 | 2 | 3 | 4 | 5;
 
+export type Surface = "route" | "chemin" | "piste" | "tapis";
+
 export interface Entree {
   seanceId: string;
   date: string; // ISO, date réelle de réalisation
@@ -80,15 +82,43 @@ export interface Entree {
   allure?: string; // "5:42"
   fc_moyenne?: number;
   commentaire?: string;
+  // Contexte (facultatif)
+  chaussure_id?: string;
+  surface?: Surface;
+  meteo?: { temp_c?: number; condition?: string };
+  denivele_m?: number;
+  charge?: number; // calculé : (6 − ressenti) × duree_min
 }
 
-// ---- Mesures de sommeil / récupération (une par jour) ----
+// ---- Check-in du matin (une entrée par jour) ----
 
-export interface MesureSommeil {
+export type Note03 = 0 | 1 | 2 | 3;
+
+export interface Douleur {
+  cheville?: Note03;
+  genou?: Note03;
+  tendon?: Note03;
+}
+
+export interface CheckIn {
   date: string; // ISO YYYY-MM-DD (une entrée par jour)
-  fc_sommeil?: number; // FC moyenne pendant le sommeil (bpm)
-  vfc_ms?: number; // variabilité de la FC pendant le sommeil (ms)
-  temp_var?: number; // variation de la température de la peau (°C, signée)
+  sommeil_h?: number; // durée de sommeil (heures)
+  fraicheur?: 1 | 2 | 3 | 4 | 5; // 1 = épuisé … 5 = frais
+  douleur?: Douleur; // 0 à 3 par articulation, 0 par défaut
+  // Mesures de la montre (facultatives)
+  fc_sommeil?: number; // FC moyenne de sommeil (bpm)
+  vfc_ms?: number; // variabilité de la FC (ms)
+  temp_cutanee?: number; // variation de température cutanée (°C, signée)
+}
+
+// ---- Chaussures ----
+
+export interface Chaussure {
+  id: string;
+  nom: string;
+  km: number; // kilométrage de départ du compteur
+  date_mise_en_service?: string; // ISO
+  archivee: boolean;
 }
 
 // ---- Réglages ----
@@ -97,4 +127,6 @@ export interface Reglages {
   dateDebut: string | null; // lundi de la semaine 1 (ISO)
   vma: number;
   dernierExport?: string; // ISO
+  chaussures: Chaussure[];
+  derniereChaussure?: string; // id de la dernière paire choisie
 }

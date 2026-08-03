@@ -1,11 +1,16 @@
 // Formulaire de saisie d'une séance — plein écran, une action primaire.
 
 import { useEffect, useMemo, useState } from "react";
-import type { Entree, Ressenti, Seance, Statut } from "../data/types";
-import { allureFrom, parsePace } from "../lib/format";
+import type { Entree, Ressenti, Seance, Statut, Surface } from "../data/types";
+import { allureFrom, nombreFr, parsePace } from "../lib/format";
 import { TYPE_LABEL } from "../lib/labels";
 import { allureCibleTexte, zoneSeance } from "../lib/vma";
+import { estCourue, kmChaussure } from "../lib/chaussures";
+import { useApp } from "../store/useApp";
 import ZonePill from "./ZonePill";
+
+const SURFACES: Surface[] = ["route", "chemin", "piste", "tapis"];
+const CONDITIONS = ["sec", "pluie", "vent", "chaleur"];
 
 const STATUTS: { v: Statut; label: string }[] = [
   { v: "faite", label: "Faite" },
@@ -77,6 +82,20 @@ export default function SeanceForm({
   const [fc, setFc] = useState(existante?.fc_moyenne?.toString() ?? "");
   const [commentaire, setCommentaire] = useState(existante?.commentaire ?? "");
 
+  const { reglages, journal, majReglages } = useApp();
+  const courue = estCourue(seance.type);
+  const chaussuresActives = reglages.chaussures.filter((c) => !c.archivee);
+  const [chaussureId, setChaussureId] = useState<string | undefined>(
+    existante?.chaussure_id ?? reglages.derniereChaussure ?? chaussuresActives[0]?.id,
+  );
+
+  // Contexte (replié par défaut).
+  const [contexteOuvert, setContexteOuvert] = useState(false);
+  const [surface, setSurface] = useState<Surface | undefined>(existante?.surface);
+  const [meteoTemp, setMeteoTemp] = useState(existante?.meteo?.temp_c?.toString() ?? "");
+  const [meteoCond, setMeteoCond] = useState<string | undefined>(existante?.meteo?.condition);
+  const [denivele, setDenivele] = useState(existante?.denivele_m?.toString() ?? "");
+
   const zone = zoneSeance(seance);
   const cible = allureCibleTexte(seance, vma);
 
@@ -99,6 +118,10 @@ export default function SeanceForm({
       const v = parseFloat(s.replace(",", "."));
       return isFinite(v) ? v : undefined;
     };
+    const meteo =
+      num(meteoTemp) != null || meteoCond
+        ? { temp_c: num(meteoTemp), condition: meteoCond }
+        : undefined;
     const e: Entree = {
       seanceId: seance.id,
       date,
@@ -110,10 +133,15 @@ export default function SeanceForm({
             distance_km: num(distance),
             allure: allure && parsePace(allure) != null ? allure : undefined,
             fc_moyenne: num(fc),
+            chaussure_id: courue ? chaussureId : undefined,
+            surface,
+            meteo,
+            denivele_m: num(denivele),
           }
         : {}),
       commentaire: commentaire.trim() || undefined,
     };
+    if (perf && courue && chaussureId) majReglages({ derniereChaussure: chaussureId });
     onEnregistrer(e);
   }
 
@@ -243,6 +271,85 @@ export default function SeanceForm({
               {!allureManuelle && allureAuto && (
                 <p className="-mt-4 text-xs text-sourdine">Calculée depuis durée et distance.</p>
               )}
+
+              {courue && chaussuresActives.length > 0 && (
+                <Champ label="Chaussures">
+                  <div className="flex w-full flex-wrap gap-2">
+                    {chaussuresActives.map((c) => {
+                      const on = chaussureId === c.id;
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => setChaussureId(on ? undefined : c.id)}
+                          className={`min-h-[44px] rounded-md border px-3 text-sm transition-colors ${
+                            on ? "border-zone2 bg-zone2/10 text-encre" : "border-black/15 text-sourdine"
+                          }`}
+                        >
+                          {c.nom}{" "}
+                          <span className="tnum font-mono text-xs opacity-70">
+                            {nombreFr(Math.round(kmChaussure(c, journal)))} km
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Champ>
+              )}
+
+              <div className="border-t border-black/10 pt-3">
+                <button
+                  onClick={() => setContexteOuvert((v) => !v)}
+                  aria-expanded={contexteOuvert}
+                  className="flex w-full items-center justify-between text-left"
+                >
+                  <span className="text-sm text-encre">Contexte (facultatif)</span>
+                  <svg viewBox="0 0 24 24" className={`h-4 w-4 text-sourdine transition-transform ${contexteOuvert ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                {contexteOuvert && (
+                  <div className="mt-3 space-y-4">
+                    <Champ label="Surface">
+                      <div className="flex w-full flex-wrap gap-2">
+                        {SURFACES.map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setSurface(surface === s ? undefined : s)}
+                            className={`min-h-[44px] flex-1 rounded-md border px-2 text-sm capitalize transition-colors ${
+                              surface === s ? "border-zone2 bg-zone2/10 text-encre" : "border-black/15 text-sourdine"
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </Champ>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Champ label="Température" suffixe="°C">
+                        <input className={inputCls} inputMode="numeric" value={meteoTemp} onChange={(e) => setMeteoTemp(e.target.value)} placeholder="—" />
+                      </Champ>
+                      <Champ label="Dénivelé +" suffixe="m">
+                        <input className={inputCls} inputMode="numeric" value={denivele} onChange={(e) => setDenivele(e.target.value)} placeholder="—" />
+                      </Champ>
+                    </div>
+                    <Champ label="Conditions">
+                      <div className="flex w-full flex-wrap gap-2">
+                        {CONDITIONS.map((cd) => (
+                          <button
+                            key={cd}
+                            onClick={() => setMeteoCond(meteoCond === cd ? undefined : cd)}
+                            className={`min-h-[44px] flex-1 rounded-md border px-2 text-sm capitalize transition-colors ${
+                              meteoCond === cd ? "border-zone2 bg-zone2/10 text-encre" : "border-black/15 text-sourdine"
+                            }`}
+                          >
+                            {cd}
+                          </button>
+                        ))}
+                      </div>
+                    </Champ>
+                  </div>
+                )}
+              </div>
             </>
           )}
 

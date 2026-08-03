@@ -15,6 +15,7 @@ import { couleurDeSemaine } from "../lib/vma";
 import { nombreFr } from "../lib/format";
 import { lazy, Suspense } from "react";
 import LoadWave from "../components/LoadWave";
+import ChargeAccueil from "../components/ChargeAccueil";
 import Section from "../components/Section";
 import Countdown from "../components/Countdown";
 
@@ -86,6 +87,7 @@ export default function Accueil({
       </header>
 
       <LoadWave semaineCourante={semNum} onOuvrir={onOuvrirSemaine} />
+      <ChargeAccueil journal={journal} dateDebut={dateDebut} semaineCourante={semNum} />
 
       {rappelExport && (
         <button

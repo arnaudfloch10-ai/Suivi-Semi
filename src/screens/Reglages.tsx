@@ -8,6 +8,7 @@ import { zoneAllureSelonVma, ZONE_COULEUR } from "../lib/vma";
 import { nombreFr } from "../lib/format";
 import { joursEntre, parseISODate, aujourdHui } from "../lib/calendar";
 import Section from "../components/Section";
+import ChaussuresReglages from "../components/ChaussuresReglages";
 import {
   construireSauvegarde,
   validerSauvegarde,
@@ -16,7 +17,7 @@ import {
 import { encoderPartage, lienCoach } from "../lib/share";
 
 export default function Reglages() {
-  const { reglages, journal, sommeil, majReglages, remplacerTout, demo } = useApp();
+  const { reglages, journal, checkins, majReglages, remplacerTout, demo } = useApp();
   const [editVma, setEditVma] = useState(false);
   const [vmaSaisie, setVmaSaisie] = useState(reglages.vma.toString());
   const fileRef = useRef<HTMLInputElement>(null);
@@ -31,7 +32,7 @@ export default function Reglages() {
   }
 
   function exporter() {
-    const data = construireSauvegarde(reglages, journal, sommeil);
+    const data = construireSauvegarde(reglages, journal, checkins);
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -55,7 +56,7 @@ export default function Reglages() {
           `Importer remplacera ton carnet actuel (${nb} séance${nb > 1 ? "s" : ""} saisie${nb > 1 ? "s" : ""}) par le fichier (${s.journal.length}). Continuer ?`,
         );
       if (!ok) return;
-      remplacerTout(s.reglages, s.journal, s.sommeil);
+      remplacerTout(s.reglages, s.journal, s.checkins);
       setMessage("Carnet importé.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Import impossible.");
@@ -64,7 +65,7 @@ export default function Reglages() {
 
   async function partagerCoach() {
     try {
-      const url = lienCoach(await encoderPartage(reglages, journal, sommeil));
+      const url = lienCoach(await encoderPartage(reglages, journal, checkins));
       if (navigator.share) {
         try {
           await navigator.share({
@@ -93,8 +94,12 @@ export default function Reglages() {
     );
     if (!ok) return;
     if (nb > 0) exporter(); // sauvegarde avant d'effacer
-    // On garde l'historique de sommeil : il n'est pas lié au plan.
-    remplacerTout({ dateDebut: null, vma: reglages.vma }, [], sommeil);
+    // On garde les check-ins : ils ne sont pas liés au plan.
+    remplacerTout(
+      { dateDebut: null, vma: reglages.vma, chaussures: reglages.chaussures },
+      [],
+      checkins,
+    );
   }
 
   const dernier = reglages.dernierExport
@@ -174,6 +179,8 @@ export default function Reglages() {
           ))}
         </ul>
       </Section>
+
+      <ChaussuresReglages />
 
       <Section titre="Points d'attention" aside={<span className="text-xs text-sourdine">de ton frère</span>}>
         <ul className="space-y-3">

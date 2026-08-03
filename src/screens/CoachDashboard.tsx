@@ -18,8 +18,9 @@ import { couleurDeSemaine, zoneSeance, ZONE_COULEUR } from "../lib/vma";
 import { formatDateComplet, formatDateCourt, nombreFr } from "../lib/format";
 import { parseISODate } from "../lib/calendar";
 import { TYPE_LABEL, STATUT_LABEL } from "../lib/labels";
-import type { MesureSommeil } from "../data/types";
+import type { CheckIn } from "../data/types";
 import LoadWave from "../components/LoadWave";
+import ChargeAccueil from "../components/ChargeAccueil";
 import Section from "../components/Section";
 import Sparkline from "../components/Sparkline";
 import Countdown from "../components/Countdown";
@@ -86,7 +87,7 @@ export default function CoachDashboard({ sauvegarde }: { sauvegarde: Sauvegarde 
         </p>
       )}
 
-      {sauvegarde.sommeil.length > 0 && <SommeilCoach mesures={sauvegarde.sommeil} />}
+      {sauvegarde.checkins.length > 0 && <SommeilCoach mesures={sauvegarde.checkins} />}
 
       <Section titre="Journal des séances">
         {journalTrie.length === 0 ? (
@@ -99,7 +100,7 @@ export default function CoachDashboard({ sauvegarde }: { sauvegarde: Sauvegarde 
   );
 }
 
-function SommeilCoach({ mesures }: { mesures: MesureSommeil[] }) {
+function SommeilCoach({ mesures }: { mesures: CheckIn[] }) {
   const chrono = [...mesures].sort((a, b) => a.date.localeCompare(b.date));
   const recents = chrono.slice(-14);
   const anti = [...recents].reverse();
@@ -110,12 +111,14 @@ function SommeilCoach({ mesures }: { mesures: MesureSommeil[] }) {
       <div className="grid grid-cols-3 gap-3">
         <TuileCoach label="VFC" valeur={d.vfc_ms != null ? `${d.vfc_ms}` : "—"} unite="ms" couleur={ZONE_COULEUR[2]} valeurs={recents.map((m) => m.vfc_ms ?? null)} />
         <TuileCoach label="FC sommeil" valeur={d.fc_sommeil != null ? `${d.fc_sommeil}` : "—"} unite="bpm" couleur={ZONE_COULEUR[1]} valeurs={recents.map((m) => m.fc_sommeil ?? null)} />
-        <TuileCoach label="Temp." valeur={d.temp_var != null ? signe(d.temp_var) : "—"} unite="°C" couleur={ZONE_COULEUR[3]} valeurs={recents.map((m) => m.temp_var ?? null)} />
+        <TuileCoach label="Temp." valeur={d.temp_cutanee != null ? signe(d.temp_cutanee) : "—"} unite="°C" couleur={ZONE_COULEUR[3]} valeurs={recents.map((m) => m.temp_cutanee ?? null)} />
       </div>
       <table className="mt-4 w-full text-sm">
         <thead>
           <tr className="text-left text-xs uppercase tracking-[0.08em] text-sourdine">
             <th className="pb-2 font-medium">Jour</th>
+            <th className="pb-2 text-right font-medium">Som.</th>
+            <th className="pb-2 text-right font-medium">Fr.</th>
             <th className="pb-2 text-right font-medium">FC</th>
             <th className="pb-2 text-right font-medium">VFC</th>
             <th className="pb-2 text-right font-medium">°C</th>
@@ -125,9 +128,11 @@ function SommeilCoach({ mesures }: { mesures: MesureSommeil[] }) {
           {anti.map((m) => (
             <tr key={m.date} className="border-t border-black/5">
               <td className="py-1.5 text-encre">{formatDateCourt(parseISODate(m.date))}</td>
+              <td className="py-1.5 text-right text-encre">{m.sommeil_h != null ? `${nombreFr(m.sommeil_h, 1)} h` : "—"}</td>
+              <td className="py-1.5 text-right text-encre">{m.fraicheur ?? "—"}</td>
               <td className="py-1.5 text-right text-encre">{m.fc_sommeil ?? "—"}</td>
               <td className="py-1.5 text-right text-encre">{m.vfc_ms ?? "—"}</td>
-              <td className="py-1.5 text-right text-encre">{m.temp_var != null ? signe(m.temp_var) : "—"}</td>
+              <td className="py-1.5 text-right text-encre">{m.temp_cutanee != null ? signe(m.temp_cutanee) : "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -175,6 +180,7 @@ function StatsPlan({ dateDebut, journal }: { dateDebut: string; journal: Entree[
           </span>
         </div>
         <LoadWave semaineCourante={semNum} onOuvrir={() => {}} anime={false} />
+        <ChargeAccueil journal={journal} dateDebut={dateDebut} semaineCourante={semNum} />
       </div>
 
       <Section titre="À ce stade du plan">
