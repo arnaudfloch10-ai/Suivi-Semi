@@ -260,7 +260,7 @@ describe("scores récupération", () => {
   });
 });
 
-describe("migration v1 → v2", () => {
+describe("migration v1 → v3", () => {
   it("un carnet v1 (sommeil/temp_var) se réimporte sans perte", async () => {
     const { validerSauvegarde } = await import("../store/storage");
     const v1 = {
@@ -271,11 +271,27 @@ describe("migration v1 → v2", () => {
       sommeil: [{ date: "2026-06-24", vfc_ms: 55, temp_var: -0.2 }],
     };
     const s = validerSauvegarde(v1);
-    expect(s.version).toBe(2);
+    expect(s.version).toBe(3);
     expect(s.journal).toHaveLength(1);
     expect(s.checkins).toHaveLength(1);
     expect(s.checkins[0].temp_cutanee).toBe(-0.2);
     expect(s.reglages.chaussures.length).toBeGreaterThan(0); // paires par défaut ajoutées
+    // Fichier ancien sans plan embarqué → on retombe sur le plan groupé.
+    expect(s.programme.semaines.length).toBeGreaterThan(0);
+  });
+
+  it("un carnet v3 conserve le plan embarqué à l'import", async () => {
+    const { validerSauvegarde, construireSauvegarde } = await import("../store/storage");
+    const planFactice = {
+      meta: { titre: "Plan test", athlete: "Zoé", auteur: "coach", vma_kmh: 15, objectif: "10 km", duree_semaines: 1, date_debut: null, volume_total_km: null },
+      zones: [],
+      points_attention: [],
+      semaines: [{ numero: 1, mesocycle: "m", periode: "p", intensite: "+", volume_km: 20, seances: [] }],
+    };
+    const brut = construireSauvegarde({ dateDebut: "2026-06-22", vma: 15, chaussures: [] }, [], [], planFactice as never);
+    const s = validerSauvegarde(JSON.parse(JSON.stringify(brut)));
+    expect(s.programme.meta.athlete).toBe("Zoé");
+    expect(s.programme.meta.titre).toBe("Plan test");
   });
 });
 

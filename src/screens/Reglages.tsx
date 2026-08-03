@@ -232,7 +232,9 @@ export default function Reglages() {
 
       <Section titre="Sauvegarde">
         <p className="mb-4 text-sm text-sourdine">
-          Tes données vivent uniquement sur ce téléphone. Exporte régulièrement pour ne rien perdre.
+          Tes données vivent uniquement sur ce téléphone. Exporte régulièrement
+          pour ne rien perdre. Le fichier embarque aussi ton plan : c'est lui que
+          ton frère importe dans son tableau de bord coach.
         </p>
         <div className="space-y-2.5">
           <button
