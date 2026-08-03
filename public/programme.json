@@ -1,6 +1,6 @@
 {
   "meta": {
-    "titre": "10 km Saint-Jean-de-Maurienne — programme 9 semaines",
+    "titre": "La Saint-Maurienne — 10 km à Saint-Maur-des-Fossés · programme 9 semaines",
     "athlete": "Arnaud",
     "auteur": "Programme établi par mon frère, coach sportif",
     "vma_kmh": 14,
@@ -1014,8 +1014,8 @@
           "jour_index": 7,
           "type": "course",
           "sous_type": "Course",
-          "libelle": "10KM ST MAURIENNE SUB 60'",
-          "consigne": "Course objectif. Départ prudent (ne pas partir plus vite que l'allure cible sur le 1er km), puis stabiliser et accélérer si possible sur le dernier km.",
+          "libelle": "LA SAINT-MAURIENNE · 10 KM (sub 60')",
+          "consigne": "La Saint-Maurienne (Saint-Maur-des-Fossés), 10 km. Départ prudent (ne pas partir plus vite que l'allure cible sur le 1er km), puis stabiliser et accélérer si possible sur le dernier km.",
           "allure_cible": "Objectif ≤ 6'00/km",
           "intensite_seance": 0,
           "duree_min": null,

@@ -13,7 +13,7 @@ import {
   kmRealises,
   ressentiParSemaine,
 } from "../lib/stats";
-import { PLAN_PAR_CHARGE, VOLUME_TOTAL } from "../data/programme";
+import { PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data/programme";
 import { couleurDeSemaine, zoneSeance, ZONE_COULEUR } from "../lib/vma";
 import { formatDateComplet, nombreFr } from "../lib/format";
 import { TYPE_LABEL, STATUT_LABEL } from "../lib/labels";
@@ -122,7 +122,7 @@ function StatsPlan({ dateDebut, journal }: { dateDebut: string; journal: Entree[
           <Chiffre
             valeur={nombreFr(Math.round(ass.taux * 100))}
             unite="%"
-            legende={`${ass.realisees}/${ass.prevues} séances réalisées`}
+            legende={`${ass.realisees}/${ass.prevues} dues à ce jour · ${TOTAL_SEANCES} au total`}
           />
           {PLAN_PAR_CHARGE ? (
             <Chiffre valeur={nombreFr(Math.round(kmFaits))} unite="km" legende="parcourus et saisis" />

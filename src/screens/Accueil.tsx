@@ -1,7 +1,7 @@
 // Accueil — « Où j'en suis ». Écran d'ouverture, le plus important.
 
 import { useApp } from "../store/useApp";
-import { programme, PLAN_PAR_CHARGE, VOLUME_TOTAL } from "../data/programme";
+import { programme, PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data/programme";
 import { semaineCourante } from "../lib/calendar";
 import {
   allureEfParSemaine,
@@ -101,7 +101,7 @@ export default function Accueil({
           <Chiffre
             valeur={nombreFr(Math.round(ass.taux * 100))}
             unite="%"
-            legende={`${ass.realisees}/${ass.prevues} séances réalisées`}
+            legende={`${ass.realisees}/${ass.prevues} dues à ce jour · ${TOTAL_SEANCES} au total`}
           />
           {PLAN_PAR_CHARGE ? (
             <Chiffre
