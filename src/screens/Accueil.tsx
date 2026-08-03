@@ -106,7 +106,7 @@ export default function Accueil({
           />
           {PLAN_PAR_CHARGE ? (
             <Chiffre
-              valeur={nombreFr(Math.round(kmFaits))}
+              valeur={nombreFr(kmFaits, 1)}
               unite="km"
               legende="parcourus et saisis"
             />
