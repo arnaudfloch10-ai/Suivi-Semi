@@ -4,7 +4,7 @@
 import { useRef, useState } from "react";
 import { useApp } from "../store/useApp";
 import { programme } from "../data/programme";
-import { zoneAllureSelonVma, ZONE_COULEUR } from "../lib/vma";
+import { zonePaceLabel, zonePctLabel, ZONE_COULEUR } from "../lib/vma";
 import { nombreFr } from "../lib/format";
 import { joursEntre, parseISODate, aujourdHui, toISODate } from "../lib/calendar";
 import Section from "../components/Section";
@@ -209,8 +209,8 @@ export default function Reglages() {
                 <span className="block text-xs text-sourdine">{z.usage}</span>
               </span>
               <span className="tnum shrink-0 text-right font-mono text-sm text-encre">
-                {zoneAllureSelonVma(z, programme.meta.vma_kmh, reglages.vma)}
-                {z.pct_vma && <span className="block text-xs text-sourdine">{z.pct_vma}</span>}
+                {zonePaceLabel(reglages.vma, z.zone)} /km
+                <span className="block text-xs text-sourdine">{zonePctLabel(z.zone)}</span>
               </span>
             </li>
           ))}

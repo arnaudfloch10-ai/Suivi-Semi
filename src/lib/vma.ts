@@ -20,14 +20,23 @@ export const ZONE_NOM: Record<number, string> = {
   5: "rouge sombre",
 };
 
-// Plages de % VMA par zone (fraction). min = pourcentage bas, max = haut.
+// Plages de % VMA par zone (fraction). lo = bas, hi = haut.
+// Bandes CONTIGUËS : le haut d'une zone = le bas de la suivante, aucun trou
+// d'allure. Chaque plage cible du coach (récup, EF, SV1, SV2, VMA) tombe bien
+// à l'intérieur de sa zone.
 const ZONE_PCT: Record<number, { lo: number; hi: number }> = {
-  1: { lo: 0.5, hi: 0.6 },
-  2: { lo: 0.65, hi: 0.75 },
-  3: { lo: 0.78, hi: 0.83 },
-  4: { lo: 0.85, hi: 0.9 },
-  5: { lo: 0.9, hi: 1.0 },
+  1: { lo: 0.6, hi: 0.7 }, // récupération
+  2: { lo: 0.7, hi: 0.77 }, // endurance fondamentale
+  3: { lo: 0.77, hi: 0.85 }, // seuil aérobie (SV1)
+  4: { lo: 0.85, hi: 0.925 }, // seuil anaérobie (SV2)
+  5: { lo: 0.925, hi: 1.05 }, // VMA / piste
 };
+
+/** "70 – 77 % VMA" pour une zone. */
+export function zonePctLabel(zone: number): string {
+  const { lo, hi } = ZONE_PCT[zone];
+  return `${Math.round(lo * 100)} – ${Math.round(hi * 100)} % VMA`;
+}
 
 /** Allure (min/km) pour un % de VMA. vitesse = vma·pct ; allure = 60/vitesse. */
 export function paceFromVma(vma: number, pct: number): number {
