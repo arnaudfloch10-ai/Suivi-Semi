@@ -7,6 +7,7 @@ import {
   zoneAllureSelonVma,
   zoneDeCharge,
   zoneDeSemaine,
+  zonePaceRange,
   zoneSeance,
 } from "./vma";
 import type { Zone } from "../data/types";
@@ -85,6 +86,16 @@ describe("vma — zones recalculées selon la VMA", () => {
     const plus = zoneAllureSelonVma(z2, 14, 15);
     expect(plus).not.toBe(ref);
     expect(parsePace(plus.split(" ")[0])!).toBeLessThan(parsePace(ref.split(" ")[0])!);
+  });
+});
+
+describe("vma — zones d'allure contiguës", () => {
+  it("la borne rapide d'une zone = la borne lente de la suivante", () => {
+    const vma = 14;
+    for (let z = 1; z <= 4; z++) {
+      // min = allure la plus rapide de la zone z ; max = la plus lente de z+1
+      expect(zonePaceRange(vma, z).min).toBeCloseTo(zonePaceRange(vma, z + 1).max, 6);
+    }
   });
 });
 
