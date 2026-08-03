@@ -1,4 +1,4 @@
-// Accueil — « Où j'en suis ». Écran d'ouverture, le plus important.
+// Accueil — « Mon plan ». Écran d'ouverture, le plus important.
 
 import { useApp } from "../store/useApp";
 import { programme, PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data/programme";
@@ -72,7 +72,7 @@ export default function Accueil({
   return (
     <div className="animate-[fade-in_400ms_ease-out]">
       <header className="flex items-start justify-between pb-4 pt-2">
-        <h1 className="font-display text-3xl leading-none text-encre">Où j'en suis</h1>
+        <h1 className="font-display text-3xl leading-none text-encre">Mon Plan</h1>
         <div className="flex items-center gap-2 pt-1">
           <span
             className="inline-block h-2.5 w-2.5 rounded-full"
