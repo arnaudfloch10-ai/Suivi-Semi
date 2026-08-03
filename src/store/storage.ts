@@ -1,7 +1,8 @@
 // Persistance — clés localStorage séparées : réglages, journal des séances,
 // check-ins du matin. Migration silencieuse des anciennes données.
 
-import type { Chaussure, CheckIn, Entree, Reglages } from "../data/types";
+import type { Chaussure, CheckIn, Entree, Programme, Reglages } from "../data/types";
+import { programme } from "../data/programme";
 
 const CLE_REGLAGES = "suivi-semi:reglages";
 const CLE_JOURNAL = "suivi-semi:journal";
@@ -96,29 +97,35 @@ export function ecrireCheckins(c: CheckIn[]): void {
 
 export interface Sauvegarde {
   app: "suivi-semi";
-  version: 2;
+  version: 3;
   exporteLe: string;
   reglages: Reglages;
   journal: Entree[];
   checkins: CheckIn[];
+  // Copie du plan suivi, embarquée dès la v3 : une app de suivi séparée (vue
+  // coach) peut ainsi comparer prévu et réalisé sans connaître le plan à
+  // l'avance. En interne on retombe toujours sur le plan groupé de l'app.
+  programme: Programme;
 }
 
 export function construireSauvegarde(
   reglages: Reglages,
   journal: Entree[],
   checkins: CheckIn[],
+  prog: Programme = programme,
 ): Sauvegarde {
   return {
     app: "suivi-semi",
-    version: 2,
+    version: 3,
     exporteLe: new Date().toISOString(),
     reglages,
     journal,
     checkins,
+    programme: prog,
   };
 }
 
-/** Valide et migre une sauvegarde (accepte les anciens fichiers v1). */
+/** Valide et migre une sauvegarde (accepte les anciens fichiers v1/v2). */
 export function validerSauvegarde(data: unknown): Sauvegarde {
   if (
     !data ||
@@ -140,12 +147,19 @@ export function validerSauvegarde(data: unknown): Sauvegarde {
 
   const reglages = normaliserReglages(d.reglages as Partial<Reglages>);
 
+  // Plan embarqué (v3+) ; les fichiers antérieurs retombent sur le plan groupé.
+  const prog =
+    d.programme && typeof d.programme === "object"
+      ? (d.programme as Programme)
+      : programme;
+
   return {
     app: "suivi-semi",
-    version: 2,
+    version: 3,
     exporteLe: typeof d.exporteLe === "string" ? d.exporteLe : new Date().toISOString(),
     reglages,
     journal: d.journal as Entree[],
     checkins,
+    programme: prog,
   };
 }
