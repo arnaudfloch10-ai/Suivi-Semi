@@ -129,6 +129,22 @@ describe("calendar", () => {
   });
 });
 
+describe("partage (lien coach)", () => {
+  it("round-trip encode → décode", async () => {
+    const { encoderPartage, decoderPartage } = await import("./share");
+    const reglages = { dateDebut: "2026-06-22", vma: 14 };
+    const journal: Entree[] = [
+      { seanceId: "S1-J3", date: "2026-06-24", statut: "faite", ressenti: 3, allure: "6:22", commentaire: "jambes ok" },
+      { seanceId: "S3-J7", date: "2026-07-12", statut: "manquee", ressenti: 3 },
+    ];
+    const payload = await encoderPartage(reglages, journal);
+    const s = await decoderPartage(payload);
+    expect(s.journal).toHaveLength(2);
+    expect(s.reglages.vma).toBe(14);
+    expect(s.journal[0].commentaire).toBe("jambes ok");
+  });
+});
+
 describe("stats", () => {
   const debut = "2000-01-03"; // lundi très ancien → tout est « passé »
   const journal: Entree[] = [
