@@ -8,10 +8,10 @@ import type { Entree, Seance } from "../data/types";
 import { semaineCourante } from "../lib/calendar";
 import {
   allureEfParSemaine,
-  assiduite,
   kmPrevusAJour,
   kmRealises,
   ressentiParSemaine,
+  seancesRealisees,
 } from "../lib/stats";
 import { PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data/programme";
 import { couleurDeSemaine, zoneSeance, ZONE_COULEUR } from "../lib/vma";
@@ -95,7 +95,8 @@ export default function CoachDashboard({ sauvegarde }: { sauvegarde: Sauvegarde 
 function StatsPlan({ dateDebut, journal }: { dateDebut: string; journal: Entree[] }) {
   const semNum = semaineCourante(dateDebut);
   const sem = programme.semaines.find((s) => s.numero === semNum)!;
-  const ass = assiduite(dateDebut, journal);
+  const faites = seancesRealisees(journal);
+  const pctPlan = TOTAL_SEANCES ? Math.round((faites / TOTAL_SEANCES) * 100) : 0;
   const kmFaits = kmRealises(journal);
   const kmPrevus = kmPrevusAJour(dateDebut);
   const ressenti = ressentiParSemaine(journal);
@@ -120,9 +121,9 @@ function StatsPlan({ dateDebut, journal }: { dateDebut: string; journal: Entree[
       <Section titre="À ce stade du plan">
         <div className="grid grid-cols-2 gap-6">
           <Chiffre
-            valeur={nombreFr(Math.round(ass.taux * 100))}
-            unite="%"
-            legende={`${ass.realisees}/${ass.prevues} dues à ce jour · ${TOTAL_SEANCES} au total`}
+            valeur={nombreFr(faites)}
+            unite={`/ ${TOTAL_SEANCES}`}
+            legende={`séances réalisées · ${pctPlan}% du plan`}
           />
           {PLAN_PAR_CHARGE ? (
             <Chiffre valeur={nombreFr(Math.round(kmFaits))} unite="km" legende="parcourus et saisis" />
