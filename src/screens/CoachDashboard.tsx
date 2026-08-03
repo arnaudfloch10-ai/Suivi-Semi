@@ -191,7 +191,7 @@ function StatsPlan({ dateDebut, journal }: { dateDebut: string; journal: Entree[
             legende={`séances réalisées · ${pctPlan}% du plan`}
           />
           {PLAN_PAR_CHARGE ? (
-            <Chiffre valeur={nombreFr(Math.round(kmFaits))} unite="km" legende="parcourus et saisis" />
+            <Chiffre valeur={nombreFr(kmFaits, 1)} unite="km" legende="parcourus et saisis" />
           ) : (
             <Chiffre
               valeur={nombreFr(Math.round(kmFaits))}
