@@ -6,7 +6,7 @@ import { useApp } from "../store/useApp";
 import { programme } from "../data/programme";
 import { zoneAllureSelonVma, ZONE_COULEUR } from "../lib/vma";
 import { nombreFr } from "../lib/format";
-import { joursEntre, parseISODate, aujourdHui } from "../lib/calendar";
+import { joursEntre, parseISODate, aujourdHui, toISODate } from "../lib/calendar";
 import Section from "../components/Section";
 import ChaussuresReglages from "../components/ChaussuresReglages";
 import {
@@ -18,6 +18,7 @@ import { encoderPartage, lienCoach } from "../lib/share";
 
 export default function Reglages() {
   const { reglages, journal, checkins, majReglages, remplacerTout, demo } = useApp();
+  const cibleSommeil = reglages.cibleSommeil ?? 7.5;
   const [editVma, setEditVma] = useState(false);
   const [vmaSaisie, setVmaSaisie] = useState(reglages.vma.toString());
   const fileRef = useRef<HTMLInputElement>(null);
@@ -102,6 +103,13 @@ export default function Reglages() {
     );
   }
 
+  function reinitBaselines() {
+    if (window.confirm("Réinitialiser les baselines à partir d'aujourd'hui ? Les moyennes glissantes ignoreront les données antérieures.")) {
+      majReglages({ baselineDepuis: toISODate(aujourdHui()), scoresStableVu: false });
+      setMessage("Baselines réinitialisées.");
+    }
+  }
+
   const dernier = reglages.dernierExport
     ? joursEntre(parseISODate(reglages.dernierExport.slice(0, 10)), aujourdHui())
     : null;
@@ -152,6 +160,35 @@ export default function Reglages() {
             Modifie la VMA pour recalculer tes zones d'allure ci-dessous. Les
             consignes de chaque séance restent celles de ton frère.
           </p>
+        </div>
+      </Section>
+
+      <Section titre="Récupération & scores">
+        <div className="space-y-4">
+          <Ligne label="Cible de sommeil">
+            <span className="flex items-center gap-2">
+              <button onClick={() => majReglages({ cibleSommeil: Math.max(4, cibleSommeil - 0.25) })} className="h-8 w-8 rounded-md border border-black/15 text-encre">−</button>
+              <span className="tnum w-16 text-center font-mono text-sm text-encre">{heuresReglages(cibleSommeil)}</span>
+              <button onClick={() => majReglages({ cibleSommeil: Math.min(11, cibleSommeil + 0.25) })} className="h-8 w-8 rounded-md border border-black/15 text-encre">+</button>
+            </span>
+          </Ligne>
+          <Ligne label="Masquer les scores">
+            <button
+              role="switch"
+              aria-checked={!!reglages.masquerScores}
+              onClick={() => majReglages({ masquerScores: !reglages.masquerScores })}
+              className={`relative h-7 w-12 rounded-full transition-colors ${reglages.masquerScores ? "bg-zone2" : "bg-black/15"}`}
+            >
+              <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white transition-all ${reglages.masquerScores ? "left-[22px]" : "left-0.5"}`} />
+            </button>
+          </Ligne>
+          <p className="text-xs text-sourdine">
+            Surveiller un score de sommeil peut dégrader le sommeil : tu peux couper l'affichage tout en continuant à saisir tes données.
+          </p>
+          <button onClick={reinitBaselines} className="min-h-[44px] w-full rounded-md border border-black/15 text-sm text-encre">
+            Réinitialiser les baselines
+          </button>
+          <p className="text-xs text-sourdine">Utile après un changement de montre : les moyennes repartent d'aujourd'hui.</p>
         </div>
       </Section>
 
@@ -271,6 +308,12 @@ export default function Reglages() {
       </Section>
     </div>
   );
+}
+
+function heuresReglages(h: number): string {
+  const e = Math.floor(h);
+  const m = Math.round((h - e) * 60);
+  return m ? `${e} h ${m.toString().padStart(2, "0")}` : `${e} h`;
 }
 
 function Ligne({ label, children }: { label: string; children: React.ReactNode }) {

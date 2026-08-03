@@ -57,8 +57,18 @@ export const JOURNAL_DEMO: Entree[] = [
   { seanceId: "S6-J5", date: "2026-07-31", statut: "faite", ressenti: 4, duree_min: 40, commentaire: "25 min SV1 en continu." },
 ];
 
-// Check-ins de démonstration (derniers jours).
+// Check-ins de démonstration (assez de nuits pour atteindre l'état « stable »).
 export const CHECKINS_DEMO: CheckIn[] = [
+  { date: "2026-07-15", sommeil_h: 6.5, fraicheur: 3, fc_sommeil: 56, vfc_ms: 46, temp_cutanee: 0.1 },
+  { date: "2026-07-16", sommeil_h: 7.0, fraicheur: 3, fc_sommeil: 55, vfc_ms: 48, temp_cutanee: 0.0 },
+  { date: "2026-07-17", sommeil_h: 6.0, fraicheur: 2, fc_sommeil: 57, vfc_ms: 43, temp_cutanee: 0.2, douleur: { tendon: 1 } },
+  { date: "2026-07-18", sommeil_h: 7.5, fraicheur: 4, fc_sommeil: 54, vfc_ms: 50, temp_cutanee: -0.1 },
+  { date: "2026-07-19", sommeil_h: 8.0, fraicheur: 4, fc_sommeil: 53, vfc_ms: 52, temp_cutanee: 0.0 },
+  { date: "2026-07-20", sommeil_h: 6.5, fraicheur: 3, fc_sommeil: 55, vfc_ms: 46, temp_cutanee: 0.1 },
+  { date: "2026-07-21", sommeil_h: 7.0, fraicheur: 4, fc_sommeil: 54, vfc_ms: 49, temp_cutanee: -0.1 },
+  { date: "2026-07-22", sommeil_h: 5.5, fraicheur: 2, fc_sommeil: 58, vfc_ms: 42, temp_cutanee: 0.3, douleur: { genou: 2 } },
+  { date: "2026-07-23", sommeil_h: 7.0, fraicheur: 3, fc_sommeil: 55, vfc_ms: 47, temp_cutanee: 0.0 },
+  { date: "2026-07-24", sommeil_h: 7.5, fraicheur: 4, fc_sommeil: 53, vfc_ms: 51, temp_cutanee: -0.1 },
   { date: "2026-07-25", sommeil_h: 6.5, fraicheur: 3, fc_sommeil: 55, vfc_ms: 47, temp_cutanee: 0.1 },
   { date: "2026-07-26", sommeil_h: 7.0, fraicheur: 3, fc_sommeil: 54, vfc_ms: 48, temp_cutanee: -0.1 },
   { date: "2026-07-27", sommeil_h: 6.0, fraicheur: 2, fc_sommeil: 54, vfc_ms: 48, temp_cutanee: -0.1, douleur: { cheville: 1 } },
@@ -68,4 +78,5 @@ export const CHECKINS_DEMO: CheckIn[] = [
   { date: "2026-07-31", sommeil_h: 7.5, fraicheur: 4, fc_sommeil: 51, vfc_ms: 58, temp_cutanee: -0.1 },
   { date: "2026-08-01", sommeil_h: 8.0, fraicheur: 5, fc_sommeil: 50, vfc_ms: 61, temp_cutanee: 0.1 },
   { date: "2026-08-02", sommeil_h: 7.0, fraicheur: 4, fc_sommeil: 49, vfc_ms: 63, temp_cutanee: 0.0 },
+  { date: "2026-08-03", sommeil_h: 6.0, fraicheur: 3, fc_sommeil: 52, vfc_ms: 58, temp_cutanee: 0.1, douleur: { cheville: 1 } },
 ];

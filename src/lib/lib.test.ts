@@ -13,7 +13,7 @@ import type { Zone } from "../data/types";
 import { aujourdHui, dateCourse, dateSeance, semaineCourante, toISODate } from "./calendar";
 import { assiduite, kmRealises } from "./stats";
 import { PLAN_PAR_CHARGE, programme } from "../data/programme";
-import type { Entree, Seance, Semaine } from "../data/types";
+import type { CheckIn as CheckInT, Entree, Seance, Semaine } from "../data/types";
 
 const mkSeance = (over: Partial<Seance>): Seance => ({
   id: "x",
@@ -190,6 +190,73 @@ describe("baseline", () => {
     expect(e.disponible).toBe(true);
     expect(e.favorable).toBe(true);
     expect(e.ecart! > 0).toBe(true);
+  });
+});
+
+describe("scores récupération", () => {
+  const d = (n: number) => `2026-07-${String(n).padStart(2, "0")}`;
+  const nuit = (n: number, over: Partial<CheckInT> = {}): CheckInT => ({
+    date: d(n), sommeil_h: 7.5, ...over,
+  });
+
+  it("moyenne exclut une valeur aberrante isolée", async () => {
+    const { moyenneSansAberrants } = await import("./scores");
+    const xs = [...Array(29).fill(50), 200];
+    expect(moyenneSansAberrants(xs)).toBeCloseTo(50, 5);
+  });
+
+  it("scoreDuree : cible, plancher, pas de bonus", async () => {
+    const { scoreDuree } = await import("./scores");
+    expect(scoreDuree(7.5, 7.5)).toBe(100);
+    expect(scoreDuree(4, 7.5)).toBe(0);
+    expect(scoreDuree(5.75, 7.5)).toBeCloseTo(50, 5);
+    expect(scoreDuree(9, 7.5)).toBe(100);
+  });
+
+  it("3 nuits → état insuffisant, pas de score", async () => {
+    const { scoreSommeil } = await import("./scores");
+    const cks = [nuit(1), nuit(2), nuit(3)];
+    const r = scoreSommeil(cks, d(3));
+    expect(r.etat).toBe("insuffisant");
+    expect(r.score).toBeNull();
+    expect(r.nuitsManquantes).toBe(2);
+  });
+
+  it("5 nuits → état provisoire, score présent", async () => {
+    const { scoreSommeil } = await import("./scores");
+    const cks = [1, 2, 3, 4, 5].map((n) => nuit(n));
+    const r = scoreSommeil(cks, d(5));
+    expect(r.etat).toBe("provisoire");
+    expect(r.provisoire).toBe(true);
+    expect(r.score).not.toBeNull();
+  });
+
+  it("énergie sur données partielles : fraîcheur seule + renormalisation", async () => {
+    const { scoreEnergie } = await import("./scores");
+    // 6 nuits d'historique, puis un jour où seule la fraîcheur est saisie.
+    const cks = [1, 2, 3, 4, 5, 6].map((n) => nuit(n));
+    cks.push({ date: d(7), fraicheur: 4 }); // pas de sommeil_h ni montre ce jour
+    const r = scoreEnergie(cks, d(7));
+    expect(r.score).not.toBeNull();
+    expect(r.composantes).toHaveLength(1);
+    expect(r.composantes[0].id).toBe("fraicheur");
+    expect(r.score).toBe(75); // (4−1)/4 × 100
+  });
+
+  it("garde-fous : douleur ≥ 2 plafonne à 50", async () => {
+    const { scoreEnergie } = await import("./scores");
+    const cks = [1, 2, 3, 4, 5, 6].map((n) => nuit(n, { fraicheur: 5 }));
+    cks.push(nuit(7, { fraicheur: 5, douleur: { genou: 2 } }));
+    const r = scoreEnergie(cks, d(7));
+    expect(r.score).toBeLessThanOrEqual(50);
+    expect(r.plafonds.join(" ")).toMatch(/genou/);
+  });
+
+  it("palier : seuils élargis en provisoire", async () => {
+    const { palier } = await import("./scores");
+    expect(palier(85).zone).toBe(2);
+    expect(palier(50).zone).toBe(4);
+    expect(palier(50, true).zone).toBe(3); // provisoire plus indulgent
   });
 });
 
