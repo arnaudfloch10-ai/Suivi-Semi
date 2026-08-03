@@ -7,7 +7,7 @@ import {
   validerSauvegarde,
   type Sauvegarde,
 } from "../store/storage";
-import type { Entree, MesureSommeil, Reglages } from "../data/types";
+import type { CheckIn, Entree, Reglages } from "../data/types";
 
 function bytesToB64url(bytes: Uint8Array): string {
   let bin = "";
@@ -35,13 +35,13 @@ async function gunzip(bytes: Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
-/** Réglages + journal + sommeil → charge utile pour un lien (g=gzip, r=brut). */
+/** Réglages + journal + check-ins → charge utile pour un lien (g=gzip, r=brut). */
 export async function encoderPartage(
   reglages: Reglages,
   journal: Entree[],
-  sommeil: MesureSommeil[],
+  checkins: CheckIn[],
 ): Promise<string> {
-  const json = JSON.stringify(construireSauvegarde(reglages, journal, sommeil));
+  const json = JSON.stringify(construireSauvegarde(reglages, journal, checkins));
   const bytes = new TextEncoder().encode(json);
   if (typeof CompressionStream !== "undefined") {
     try {

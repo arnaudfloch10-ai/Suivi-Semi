@@ -10,7 +10,7 @@ import {
   zoneSeance,
 } from "./vma";
 import type { Zone } from "../data/types";
-import { dateCourse, dateSeance, semaineCourante, toISODate } from "./calendar";
+import { aujourdHui, dateCourse, dateSeance, semaineCourante, toISODate } from "./calendar";
 import { assiduite, kmRealises } from "./stats";
 import { PLAN_PAR_CHARGE, programme } from "../data/programme";
 import type { Entree, Seance, Semaine } from "../data/types";
@@ -132,19 +132,83 @@ describe("calendar", () => {
 describe("partage (lien coach)", () => {
   it("round-trip encode → décode", async () => {
     const { encoderPartage, decoderPartage } = await import("./share");
-    const reglages = { dateDebut: "2026-06-22", vma: 14 };
+    const reglages = { dateDebut: "2026-06-22", vma: 14, chaussures: [] };
     const journal: Entree[] = [
       { seanceId: "S1-J3", date: "2026-06-24", statut: "faite", ressenti: 3, allure: "6:22", commentaire: "jambes ok" },
       { seanceId: "S3-J7", date: "2026-07-12", statut: "manquee", ressenti: 3 },
     ];
-    const sommeil = [{ date: "2026-08-01", vfc_ms: 60, fc_sommeil: 50, temp_var: -0.2 }];
-    const payload = await encoderPartage(reglages, journal, sommeil);
+    const checkins = [{ date: "2026-08-01", vfc_ms: 60, fc_sommeil: 50, temp_cutanee: -0.2 }];
+    const payload = await encoderPartage(reglages, journal, checkins);
     const s = await decoderPartage(payload);
     expect(s.journal).toHaveLength(2);
     expect(s.reglages.vma).toBe(14);
     expect(s.journal[0].commentaire).toBe("jambes ok");
-    expect(s.sommeil).toHaveLength(1);
-    expect(s.sommeil[0].vfc_ms).toBe(60);
+    expect(s.checkins).toHaveLength(1);
+    expect(s.checkins[0].vfc_ms).toBe(60);
+  });
+});
+
+describe("charge (sRPE) & ACWR", () => {
+  const iso = (offset: number) =>
+    toISODate(new Date(aujourdHui().getTime() - offset * 86400000));
+  it("charge = (6 − ressenti) × durée", async () => {
+    const { chargeSeance } = await import("./charge");
+    expect(chargeSeance({ ressenti: 3, duree_min: 40 })).toBe(120);
+    expect(chargeSeance({ ressenti: 1, duree_min: 30 })).toBe(150);
+    expect(chargeSeance({ ressenti: 3, duree_min: undefined })).toBeUndefined();
+  });
+  it("ACWR gelé tant que < 28 jours d'historique", async () => {
+    const { acwr } = await import("./charge");
+    expect(acwr([], null).disponible).toBe(false);
+    expect(acwr([], iso(10)).disponible).toBe(false);
+  });
+  it("ACWR calculé au-delà de 28 jours", async () => {
+    const { acwr } = await import("./charge");
+    const journal: Entree[] = [
+      { seanceId: "S1-J1", date: iso(0), statut: "faite", ressenti: 3, duree_min: 60 }, // charge 180
+    ];
+    const r = acwr(journal, iso(40));
+    expect(r.disponible).toBe(true);
+    expect(r.aigue).toBe(180);
+    expect(r.ratio).toBeCloseTo(4, 5); // 180 / (180/4)
+  });
+});
+
+describe("baseline", () => {
+  it("écart indisponible sous 7 jours", async () => {
+    const { ecartBaseline } = await import("./baseline");
+    const cks = [1, 2, 3].map((d) => ({ date: `2026-08-0${d}`, vfc_ms: 50 }));
+    expect(ecartBaseline(cks, "vfc_ms").disponible).toBe(false);
+  });
+  it("dérive favorable quand la VFC dépasse la baseline", async () => {
+    const { ecartBaseline } = await import("./baseline");
+    const cks = [50, 50, 50, 50, 50, 50, 70].map((v, i) => ({
+      date: `2026-08-${String(i + 1).padStart(2, "0")}`,
+      vfc_ms: v,
+    }));
+    const e = ecartBaseline(cks, "vfc_ms");
+    expect(e.disponible).toBe(true);
+    expect(e.favorable).toBe(true);
+    expect(e.ecart! > 0).toBe(true);
+  });
+});
+
+describe("migration v1 → v2", () => {
+  it("un carnet v1 (sommeil/temp_var) se réimporte sans perte", async () => {
+    const { validerSauvegarde } = await import("../store/storage");
+    const v1 = {
+      app: "suivi-semi",
+      version: 1,
+      reglages: { dateDebut: "2026-06-22", vma: 14 },
+      journal: [{ seanceId: "S1-J3", date: "2026-06-24", statut: "faite", ressenti: 3 }],
+      sommeil: [{ date: "2026-06-24", vfc_ms: 55, temp_var: -0.2 }],
+    };
+    const s = validerSauvegarde(v1);
+    expect(s.version).toBe(2);
+    expect(s.journal).toHaveLength(1);
+    expect(s.checkins).toHaveLength(1);
+    expect(s.checkins[0].temp_cutanee).toBe(-0.2);
+    expect(s.reglages.chaussures.length).toBeGreaterThan(0); // paires par défaut ajoutées
   });
 });
 
