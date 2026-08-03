@@ -16,7 +16,7 @@ import {
 import { encoderPartage, lienCoach } from "../lib/share";
 
 export default function Reglages() {
-  const { reglages, journal, majReglages, remplacerTout, demo } = useApp();
+  const { reglages, journal, sommeil, majReglages, remplacerTout, demo } = useApp();
   const [editVma, setEditVma] = useState(false);
   const [vmaSaisie, setVmaSaisie] = useState(reglages.vma.toString());
   const fileRef = useRef<HTMLInputElement>(null);
@@ -31,7 +31,7 @@ export default function Reglages() {
   }
 
   function exporter() {
-    const data = construireSauvegarde(reglages, journal);
+    const data = construireSauvegarde(reglages, journal, sommeil);
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -55,7 +55,7 @@ export default function Reglages() {
           `Importer remplacera ton carnet actuel (${nb} séance${nb > 1 ? "s" : ""} saisie${nb > 1 ? "s" : ""}) par le fichier (${s.journal.length}). Continuer ?`,
         );
       if (!ok) return;
-      remplacerTout(s.reglages, s.journal);
+      remplacerTout(s.reglages, s.journal, s.sommeil);
       setMessage("Carnet importé.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Import impossible.");
@@ -64,7 +64,7 @@ export default function Reglages() {
 
   async function partagerCoach() {
     try {
-      const url = lienCoach(await encoderPartage(reglages, journal));
+      const url = lienCoach(await encoderPartage(reglages, journal, sommeil));
       if (navigator.share) {
         try {
           await navigator.share({
@@ -93,7 +93,8 @@ export default function Reglages() {
     );
     if (!ok) return;
     if (nb > 0) exporter(); // sauvegarde avant d'effacer
-    remplacerTout({ dateDebut: null, vma: reglages.vma }, []);
+    // On garde l'historique de sommeil : il n'est pas lié au plan.
+    remplacerTout({ dateDebut: null, vma: reglages.vma }, [], sommeil);
   }
 
   const dernier = reglages.dernierExport

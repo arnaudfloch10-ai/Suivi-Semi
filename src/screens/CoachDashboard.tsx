@@ -15,11 +15,16 @@ import {
 } from "../lib/stats";
 import { PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data/programme";
 import { couleurDeSemaine, zoneSeance, ZONE_COULEUR } from "../lib/vma";
-import { formatDateComplet, nombreFr } from "../lib/format";
+import { formatDateComplet, formatDateCourt, nombreFr } from "../lib/format";
+import { parseISODate } from "../lib/calendar";
 import { TYPE_LABEL, STATUT_LABEL } from "../lib/labels";
+import type { MesureSommeil } from "../data/types";
 import LoadWave from "../components/LoadWave";
 import Section from "../components/Section";
+import Sparkline from "../components/Sparkline";
 import Countdown from "../components/Countdown";
+
+const signe = (n: number) => `${n > 0 ? "+" : ""}${nombreFr(n, 1)}`;
 
 const CourbeRessenti = lazy(() =>
   import("../components/Courbes").then((m) => ({ default: m.CourbeRessenti })),
@@ -81,6 +86,8 @@ export default function CoachDashboard({ sauvegarde }: { sauvegarde: Sauvegarde 
         </p>
       )}
 
+      {sauvegarde.sommeil.length > 0 && <SommeilCoach mesures={sauvegarde.sommeil} />}
+
       <Section titre="Journal des séances">
         {journalTrie.length === 0 ? (
           <p className="text-sm text-sourdine">Aucune séance saisie pour l'instant.</p>
@@ -88,6 +95,58 @@ export default function CoachDashboard({ sauvegarde }: { sauvegarde: Sauvegarde 
           <JournalComplet journal={journalTrie} />
         )}
       </Section>
+    </div>
+  );
+}
+
+function SommeilCoach({ mesures }: { mesures: MesureSommeil[] }) {
+  const chrono = [...mesures].sort((a, b) => a.date.localeCompare(b.date));
+  const recents = chrono.slice(-14);
+  const anti = [...recents].reverse();
+  const d = chrono[chrono.length - 1];
+
+  return (
+    <Section titre="Sommeil & récupération">
+      <div className="grid grid-cols-3 gap-3">
+        <TuileCoach label="VFC" valeur={d.vfc_ms != null ? `${d.vfc_ms}` : "—"} unite="ms" couleur={ZONE_COULEUR[2]} valeurs={recents.map((m) => m.vfc_ms ?? null)} />
+        <TuileCoach label="FC sommeil" valeur={d.fc_sommeil != null ? `${d.fc_sommeil}` : "—"} unite="bpm" couleur={ZONE_COULEUR[1]} valeurs={recents.map((m) => m.fc_sommeil ?? null)} />
+        <TuileCoach label="Temp." valeur={d.temp_var != null ? signe(d.temp_var) : "—"} unite="°C" couleur={ZONE_COULEUR[3]} valeurs={recents.map((m) => m.temp_var ?? null)} />
+      </div>
+      <table className="mt-4 w-full text-sm">
+        <thead>
+          <tr className="text-left text-xs uppercase tracking-[0.08em] text-sourdine">
+            <th className="pb-2 font-medium">Jour</th>
+            <th className="pb-2 text-right font-medium">FC</th>
+            <th className="pb-2 text-right font-medium">VFC</th>
+            <th className="pb-2 text-right font-medium">°C</th>
+          </tr>
+        </thead>
+        <tbody className="tnum font-mono">
+          {anti.map((m) => (
+            <tr key={m.date} className="border-t border-black/5">
+              <td className="py-1.5 text-encre">{formatDateCourt(parseISODate(m.date))}</td>
+              <td className="py-1.5 text-right text-encre">{m.fc_sommeil ?? "—"}</td>
+              <td className="py-1.5 text-right text-encre">{m.vfc_ms ?? "—"}</td>
+              <td className="py-1.5 text-right text-encre">{m.temp_var != null ? signe(m.temp_var) : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Section>
+  );
+}
+
+function TuileCoach({ label, valeur, unite, couleur, valeurs }: { label: string; valeur: string; unite: string; couleur: string; valeurs: (number | null)[] }) {
+  return (
+    <div>
+      <div className="text-xs uppercase tracking-[0.08em] text-sourdine">{label}</div>
+      <div className="mt-1 font-display text-2xl leading-none text-encre">
+        <span className="tnum">{valeur}</span>
+        <span className="ml-1 text-xs text-sourdine">{unite}</span>
+      </div>
+      <div className="mt-1.5">
+        <Sparkline valeurs={valeurs} couleur={couleur} />
+      </div>
     </div>
   );
 }
