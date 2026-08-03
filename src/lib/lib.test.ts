@@ -137,11 +137,14 @@ describe("partage (lien coach)", () => {
       { seanceId: "S1-J3", date: "2026-06-24", statut: "faite", ressenti: 3, allure: "6:22", commentaire: "jambes ok" },
       { seanceId: "S3-J7", date: "2026-07-12", statut: "manquee", ressenti: 3 },
     ];
-    const payload = await encoderPartage(reglages, journal);
+    const sommeil = [{ date: "2026-08-01", vfc_ms: 60, fc_sommeil: 50, temp_var: -0.2 }];
+    const payload = await encoderPartage(reglages, journal, sommeil);
     const s = await decoderPartage(payload);
     expect(s.journal).toHaveLength(2);
     expect(s.reglages.vma).toBe(14);
     expect(s.journal[0].commentaire).toBe("jambes ok");
+    expect(s.sommeil).toHaveLength(1);
+    expect(s.sommeil[0].vfc_ms).toBe(60);
   });
 });
 

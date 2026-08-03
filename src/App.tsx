@@ -4,13 +4,14 @@ import Onboarding from "./screens/Onboarding";
 import Accueil from "./screens/Accueil";
 import Aujourdhui from "./screens/Aujourdhui";
 import Semaines from "./screens/Semaines";
+import Sommeil from "./screens/Sommeil";
 import Reglages from "./screens/Reglages";
 import CoachDashboard from "./screens/CoachDashboard";
 import BottomNav from "./components/BottomNav";
 import { decoderPartage, payloadDansUrl } from "./lib/share";
 import type { Sauvegarde } from "./store/storage";
 
-export type Ecran = "accueil" | "aujourdhui" | "semaines" | "reglages";
+export type Ecran = "accueil" | "aujourdhui" | "semaines" | "sommeil" | "reglages";
 
 type CoachState =
   | { statut: "chargement" }
@@ -76,6 +77,7 @@ export default function App() {
         )}
         {ecran === "aujourdhui" && <Aujourdhui />}
         {ecran === "semaines" && <Semaines semaineInitiale={semaineOuverte} />}
+        {ecran === "sommeil" && <Sommeil />}
         {ecran === "reglages" && <Reglages />}
       </main>
       <BottomNav

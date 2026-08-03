@@ -27,6 +27,13 @@ const ITEMS: { id: Ecran; label: string; icone: JSX.Element }[] = [
     ),
   },
   {
+    id: "sommeil",
+    label: "Sommeil",
+    icone: (
+      <path d="M20 14.5A7.5 7.5 0 0 1 9.5 4a7.5 7.5 0 1 0 10.5 10.5z" />
+    ),
+  },
+  {
     id: "reglages",
     label: "Réglages",
     icone: (
@@ -59,7 +66,7 @@ export default function BottomNav({
               <button
                 onClick={() => onChange(it.id)}
                 aria-current={on ? "page" : undefined}
-                className={`flex min-h-[56px] w-full flex-col items-center justify-center gap-1 py-2 text-[11px] transition-colors ${
+                className={`flex min-h-[56px] w-full flex-col items-center justify-center gap-1 py-2 text-[10px] leading-none transition-colors ${
                   on ? "text-zone2" : "text-sourdine"
                 }`}
               >
@@ -75,7 +82,7 @@ export default function BottomNav({
                 >
                   {it.icone}
                 </svg>
-                <span className={on ? "font-medium" : ""}>{it.label}</span>
+                <span className={`whitespace-nowrap ${on ? "font-medium" : ""}`}>{it.label}</span>
               </button>
             </li>
           );

@@ -1,7 +1,7 @@
 // Données de démonstration — servent uniquement à valider le rendu (?demo),
 // jamais en usage réel. Calées sur le plan 10 km (9 semaines).
 
-import type { Entree, Reglages } from "../data/types";
+import type { Entree, MesureSommeil, Reglages } from "../data/types";
 
 // Lundi de la S1 calé pour qu'aujourd'hui tombe en fin de semaine 6.
 export const REGLAGES_DEMO: Reglages = {
@@ -50,4 +50,15 @@ export const JOURNAL_DEMO: Entree[] = [
   { seanceId: "S6-J2", date: "2026-07-28", statut: "faite", ressenti: 3, duree_min: 40, commentaire: "4 x 6 min SV2." },
   { seanceId: "S6-J4", date: "2026-07-30", statut: "faite", ressenti: 4, duree_min: 35, distance_km: 5.9, allure: "5:58" },
   { seanceId: "S6-J5", date: "2026-07-31", statut: "faite", ressenti: 4, duree_min: 40, commentaire: "25 min SV1 en continu." },
+];
+
+// Mesures de sommeil de démonstration (derniers jours).
+export const SOMMEIL_DEMO: MesureSommeil[] = [
+  { date: "2026-07-27", fc_sommeil: 54, vfc_ms: 48, temp_var: -0.1 },
+  { date: "2026-07-28", fc_sommeil: 53, vfc_ms: 52, temp_var: 0.0 },
+  { date: "2026-07-29", fc_sommeil: 56, vfc_ms: 44, temp_var: 0.3 },
+  { date: "2026-07-30", fc_sommeil: 52, vfc_ms: 55, temp_var: -0.2 },
+  { date: "2026-07-31", fc_sommeil: 51, vfc_ms: 58, temp_var: -0.1 },
+  { date: "2026-08-01", fc_sommeil: 50, vfc_ms: 61, temp_var: 0.1 },
+  { date: "2026-08-02", fc_sommeil: 49, vfc_ms: 63, temp_var: 0.0 },
 ];

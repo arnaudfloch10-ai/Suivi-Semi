@@ -82,6 +82,15 @@ export interface Entree {
   commentaire?: string;
 }
 
+// ---- Mesures de sommeil / récupération (une par jour) ----
+
+export interface MesureSommeil {
+  date: string; // ISO YYYY-MM-DD (une entrée par jour)
+  fc_sommeil?: number; // FC moyenne pendant le sommeil (bpm)
+  vfc_ms?: number; // variabilité de la FC pendant le sommeil (ms)
+  temp_var?: number; // variation de la température de la peau (°C, signée)
+}
+
 // ---- Réglages ----
 
 export interface Reglages {
