@@ -5,11 +5,11 @@ import { programme, PLAN_PAR_CHARGE, TOTAL_SEANCES, VOLUME_TOTAL } from "../data
 import { semaineCourante } from "../lib/calendar";
 import {
   allureEfParSemaine,
-  assiduite,
   exportConseille,
   kmPrevusAJour,
   kmRealises,
   ressentiParSemaine,
+  seancesRealisees,
 } from "../lib/stats";
 import { couleurDeSemaine } from "../lib/vma";
 import { nombreFr } from "../lib/format";
@@ -61,7 +61,8 @@ export default function Accueil({
   const semNum = semaineCourante(dateDebut);
   const sem = programme.semaines.find((s) => s.numero === semNum)!;
 
-  const ass = assiduite(dateDebut, journal);
+  const faites = seancesRealisees(journal);
+  const pctPlan = TOTAL_SEANCES ? Math.round((faites / TOTAL_SEANCES) * 100) : 0;
   const kmFaits = kmRealises(journal);
   const kmPrevus = kmPrevusAJour(dateDebut);
   const ressenti = ressentiParSemaine(journal);
@@ -99,9 +100,9 @@ export default function Accueil({
       <Section titre="À ce stade du plan">
         <div className="grid grid-cols-2 gap-6">
           <Chiffre
-            valeur={nombreFr(Math.round(ass.taux * 100))}
-            unite="%"
-            legende={`${ass.realisees}/${ass.prevues} dues à ce jour · ${TOTAL_SEANCES} au total`}
+            valeur={nombreFr(faites)}
+            unite={`/ ${TOTAL_SEANCES}`}
+            legende={`séances réalisées · ${pctPlan}% du plan`}
           />
           {PLAN_PAR_CHARGE ? (
             <Chiffre

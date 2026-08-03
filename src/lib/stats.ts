@@ -52,6 +52,11 @@ export function assiduite(dateDebut: string, journal: Entree[]): StatsAssiduite 
   return { prevues, realisees, taux: prevues ? realisees / prevues : 0 };
 }
 
+/** Nombre de séances réalisées (faites ou adaptées) sur tout le plan. */
+export function seancesRealisees(journal: Entree[]): number {
+  return journal.filter((e) => e.statut === "faite" || e.statut === "adaptee").length;
+}
+
 /** Km réellement parcourus (somme des distances saisies). */
 export function kmRealises(journal: Entree[]): number {
   return journal.reduce((km, e) => km + (e.distance_km ?? 0), 0);
