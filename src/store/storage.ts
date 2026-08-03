@@ -17,6 +17,8 @@ const REGLAGES_DEFAUT: Reglages = {
   dateDebut: null,
   vma: 14,
   chaussures: CHAUSSURES_DEFAUT,
+  cibleSommeil: 7.5,
+  masquerScores: false,
 };
 
 /** Complète des réglages potentiellement anciens (chaussures manquantes…). */

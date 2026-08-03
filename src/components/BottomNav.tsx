@@ -27,6 +27,15 @@ const ITEMS: { id: Ecran; label: string; icone: JSX.Element }[] = [
     ),
   },
   {
+    id: "recup",
+    label: "Récup",
+    icone: (
+      <>
+        <path d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 7 4.5c0 5.15-7 9.5-7 9.5z" />
+      </>
+    ),
+  },
+  {
     id: "reglages",
     label: "Réglages",
     icone: (

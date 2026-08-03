@@ -129,4 +129,9 @@ export interface Reglages {
   dernierExport?: string; // ISO
   chaussures: Chaussure[];
   derniereChaussure?: string; // id de la dernière paire choisie
+  // Récupération / scores
+  cibleSommeil?: number; // heures (défaut 7,5)
+  masquerScores?: boolean; // couper l'affichage des scores
+  baselineDepuis?: string; // ISO — ne prend en compte les données qu'après cette date
+  scoresStableVu?: boolean; // le passage en mode stable a déjà été signalé
 }
